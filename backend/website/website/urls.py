@@ -14,16 +14,19 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.contrib.auth import views as auth_views
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from authentication.views import *
-from django.conf import settings
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
-    path('home/', home, name = "recipes"),
+    path('home/', home, name = "recipes"), #not needed will replace with calendar page
     path('admin/', admin.site.urls),
     path('login/', login_page, name = 'login_page'),
     path('register/', register_page, name = 'register_page'),
+    path('username_get/', username_get_page, name = 'username_get_page'),
+    path('password_reset/', password_reset_page, name = "password_reset"),
+    path('password_change/', password_change_page, name = 'password_change_page'),
+    path('password_confirm/', password_confirm_page, name = 'password_confirm_page'),
 ]
 
