@@ -80,13 +80,14 @@
   background-color: white;
   border-radius: 5px;
   border: 2px solid #000;
+  display: flex ;
 }
 
 .red-main-event-bar{
   background-color: #FF6666;
   width: 7px;
   border-radius: 4px 0px 0px 4px;
-  
+  height: 100%;
 
 }
 
@@ -99,7 +100,8 @@
   padding-left: 0.5vw;
   display: flex;
   flex-direction: column;
-
+  justify-content: space-evenly;
+  height: 100%;
 }
 
 .event-card-time{
@@ -107,11 +109,11 @@
 }
 
 .event-card-title{
-  font-size: 1.8vw;
+  font-size: 1.6vw;
   font-weight: 600;
 
 }
 
 .event-card-location{
-  font-size: 1.3vw;
+  font-size: 1.1vw;
 }

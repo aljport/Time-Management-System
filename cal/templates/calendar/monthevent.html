@@ -50,7 +50,7 @@ My Calendar
               </div>
               <div class="event-card">
                 <div class="event-card-time">
-                  {{ event.start_time }}
+                  {{ event.start_time|time:'h:i A' }}
                 </div>
                 <div class="event-card-title">
                   {{ event.title }}

@@ -136,7 +136,7 @@
                 <a href="{{ current_month_viewer }}" id = "selected">
                   Month
                 </a>
-              {% elif month_viewer == request.path_info %}
+              {% elif "month" in request.path_info %}
                 <a href="{{ current_month_viewer }}" id = "selected">
                   Month
                 </a>

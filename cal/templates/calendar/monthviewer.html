@@ -97,6 +97,7 @@ My Calendar
   {% url "monthevent" month_date=start_month_value day_date=start_day_value year_date=start_year_value selected_day=day as day_url %}
   <div class="col-1 day-num-size current-day"> 
     <a href="{{ day_url }}">
+    <div class="link-container">
       <div class = "day-num">
         {{ day }}
       </div>
@@ -112,11 +113,14 @@ My Calendar
         </div>
         {% endfor %}
       </div>
+    </div>  
     </a>
   </div>
   {% elif counter_with_offset|mod:7 == 1 %}
   {% url "monthevent" month_date=start_month_value day_date=start_day_value year_date=start_year_value selected_day=day as day_url %}
   <div class="col-1 day-num-size weekend"> 
+    <a href="{{ day_url }}">
+    <div class="link-container">
     <div class = "day-num">
       {{ day }}
     </div>
@@ -130,11 +134,14 @@ My Calendar
         </div>
       </div>
     {% endfor %}
-
+    </div>  
+    </a>
   </div>
   {% elif counter_with_offset|divisibleby:7 %}
   {% url "monthevent" month_date=start_month_value day_date=start_day_value year_date=start_year_value selected_day=day as day_url %}
     <div class="col-1 day-num-size weekend"> 
+      <a href="{{ day_url }}">
+      <div class="link-container">
       <div class = "day-num">
         {{ day }}
       </div>
@@ -148,6 +155,8 @@ My Calendar
         </div>
       </div>
       {% endfor %}
+    </div>  
+    </a>
     </div>
   {% else %}
   {% url "monthevent" month_date=start_month_value day_date=start_day_value year_date=start_year_value selected_day=day as day_url %}

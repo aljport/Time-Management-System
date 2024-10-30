@@ -425,6 +425,8 @@ def monthevent(request, month_date, day_date, year_date, selected_day):
 
   selected_day_event = datetime.date(start_year_date, start_month_date, selected_day)
 
+  
+
   context = {
     "start_date" : selected_day_event .strftime("%B %d, %Y"),
     "start_month_date" : start_month_date,

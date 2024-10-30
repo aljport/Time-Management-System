@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.functions import Now
+from django.utils import timezone
 
 import datetime
 
@@ -10,8 +11,8 @@ class Event(models.Model):
     # contains title, desc, start/end time vars, etc for the event
     title = models.CharField(max_length=150, default="My Event")
     description = models.TextField(blank=True)
-    start_time = models.DateTimeField(default=Now())
-    end_time = models.DateTimeField(default=Now() + datetime.timedelta(hours=1))
+    start_time = models.DateTimeField(default=timezone.now())
+    end_time = models.DateTimeField(default=timezone.now() + datetime.timedelta(hours=1))
     user_created = models.ForeignKey(User, on_delete=models.CASCADE, null=True) 
     attendee = models.ManyToManyField(User, related_name='events', blank=True)
     location= models.CharField(max_length=200, null=True)
