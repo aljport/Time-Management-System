@@ -71,16 +71,16 @@
           <div class = "nav-bar">
             <div class = "arrows">
 
-              {% url 'monthviewer' month_date=prev_month_value day_date=prev_day_value year_date=prev_year_value as prev_month %}
-              {% url 'monthviewer' month_date=start_month_value day_date=start_day_value year_date=start_year_value as month_viewer %}
-              {% url 'monthviewer' month_date=current_month_value day_date=current_day_value year_date=current_year_value as current_month_viewer %}
-              {% url 'monthviewer' month_date=next_month_value day_date=next_day_value year_date=next_year_value as next_month %}
+              {% url 'cal:monthviewer' month_date=prev_month_value day_date=prev_day_value year_date=prev_year_value as prev_month %}
+              {% url 'cal:monthviewer' month_date=start_month_value day_date=start_day_value year_date=start_year_value as month_viewer %}
+              {% url 'cal:monthviewer' month_date=current_month_value day_date=current_day_value year_date=current_year_value as current_month_viewer %}
+              {% url 'cal:monthviewer' month_date=next_month_value day_date=next_day_value year_date=next_year_value as next_month %}
 
               
-              {% url 'weekviewer' month_date=prev_week_month day_date=prev_week_day year_date=prev_week_year as prev_week %}
-              {% url 'weekviewer' month_date=start_month_value day_date=start_day_value year_date=start_year_value as week_viewer %}
-              {% url 'weekviewer' month_date=current_month_value day_date=current_day_value year_date=current_year_value as current_week_viewer %}
-              {% url 'weekviewer' month_date=next_week_month day_date=next_week_day year_date=next_week_year as next_week %}
+              {% url 'cal:weekviewer' month_date=prev_week_month day_date=prev_week_day year_date=prev_week_year as prev_week %}
+              {% url 'cal:weekviewer' month_date=start_month_value day_date=start_day_value year_date=start_year_value as week_viewer %}
+              {% url 'cal:weekviewer' month_date=current_month_value day_date=current_day_value year_date=current_year_value as current_week_viewer %}
+              {% url 'cal:weekviewer' month_date=next_week_month day_date=next_week_day year_date=next_week_year as next_week %}
               
               <div class = "left-arrow">
                 {% if 'week' in request.path_info %}
@@ -120,7 +120,7 @@
 
             <div class="view-selection">
 
-              {% url 'weekview' as week_view %}
+              {% url 'cal:weekview' as week_view %}
               {% if 'week' in request.path_info %}
                 <a href="{{ week_view }}" id = "selected">
                   Week
@@ -131,7 +131,7 @@
               </a>
               {% endif %}
 
-              {% url 'monthview' as month_view %}
+              {% url 'cal:monthview' as month_view %}
               {% if month_view == request.path_info %}
                 <a href="{{ current_month_viewer }}" id = "selected">
                   Month
@@ -145,7 +145,7 @@
                   Month
                 </a>
               {% endif %}
-              {% url 'index' as agenda_view %}
+              {% url 'cal:index' as agenda_view %}
               {% if agenda_view == request.path_info %}
                 <a href="{{ agenda_view }}" id = "selected">
                   Agenda

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}
+Register
+{% endblock %}
+
+{% load static %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{% static 'register.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+{% load mathfilters %}
+<div class="container mt-5">
+    <form class="col-6 mx-auto card p-3 shadow-lg" method="post" enctype="multipart/form-data">
+        <h1 style="text-align: center;">
+            Reset Password
+        </h1>
+        
+        {% csrf_token %}
+
+        <div class="alert alert-primary" role="alert">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            <label for="username">
+                Username:
+            </label>
+            <input type="text" class="form-control" name="username" id="username" placeholder="Enter Username" required>
+
+        </div>
+
+        <button type="submit" class="btn btn-primary"> Submit </button>
+    </form>
+</div>
+
+{% endblock %}

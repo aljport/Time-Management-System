@@ -21,7 +21,7 @@ My Calendar
   
   <div class="outer-container">
     <div class="outer-info-container">
-      {% url 'monthviewer' month_date=start_month_value day_date=start_day_value year_date=start_year_value as month_viewer %}
+      {% url 'cal:monthviewer' month_date=start_month_value day_date=start_day_value year_date=start_year_value as month_viewer %}
       <div class="exit-container">
         <a href ="{{ month_viewer }}">
         <svg xmlns="http://www.w3.org/2000/svg" width="31" height="31" viewBox="0 0 31 31" fill="none">

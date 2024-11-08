@@ -190,7 +190,9 @@ def getNextOffsetDate(day_name):
   else:
     return 0
 
-def monthviewer(request, month_date, day_date, year_date):
+def monthviewer(request, month_date=int(datetime.datetime.now().strftime('%m')), 
+                day_date=int(datetime.datetime.now().strftime('%d')), 
+                year_date=int(datetime.datetime.now().strftime('%Y'))):
 
   #passed in Information
   start_month_date = month_date
@@ -471,7 +473,11 @@ def monthevent(request, month_date, day_date, year_date, selected_day):
   }
   return render(request, "calendar/monthevent.html", context)
 
+def create_event_card(request):
+  
+  context = {}
 
+  return render(request, "calendar/eventcreatecard.html", context)
 
 def create_event(ev_req):
     if ev_req.method == 'POST':
