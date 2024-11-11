@@ -1,0 +1,28 @@
+{% for field in form %}
+    <div class="field-content">
+        {{ field.errors }}
+
+        {% if field.name == "start_time" or field.name == "end_time" %}
+        <div class="date-creation">
+          <div class="form-label">
+            {{ field.label_tag }}
+          </div>
+          <div class="date-field">
+            Date:
+            <input type="date" name="{{ field.name }}_date" value="{{ field.value|date:'Y-m-d' }}">
+          </div>
+
+          <div class="time-field">
+            Time:
+            <input type="time" name="{{ field.name }}_time" value="{{ field.value|date:'H:i' }}">
+          </div> 
+        </div>
+
+      {% else %}
+      <div class="form-label">
+        {{ field.label_tag }}
+      </div>
+        {{ field }}
+      {% endif %}
+    </div>
+{% endfor %}
