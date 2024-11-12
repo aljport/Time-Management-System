@@ -3,7 +3,7 @@ FROM python:3.12.5-slim-bullseye AS base
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DEFAULT_TIMEOUT=100
 
-WORKDIR /calApp
+WORKDIR /app
 
 # default to production
 ARG DEV=false
@@ -33,7 +33,7 @@ RUN adduser --no-create-home --system --disabled-password --disabled-login --gro
     chmod -R +x /scripts
 
 
-COPY ./calApp /calApp
+COPY ./app /app
 ENV PATH="/scripts:/py/bin:/usr/bin:$PATH"
 USER django-user
 
