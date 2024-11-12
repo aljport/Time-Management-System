@@ -7,9 +7,12 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .models import *
 import random
+from .models import Friends
 
 RESET_PASSWORD_USERNAME = ""
 NUMBER = ""
+CURRENT_USER = None #replace this and all references of this with the database version
+FRIEND_LIST = [] #replace this and all references of this with the database version
 
 # Create your views here.
 def home(request):
@@ -17,6 +20,7 @@ def home(request):
 
 def login_page(request):
     if request.method == "POST":
+        global CURRENT_USER
         username = request.POST.get('username')
         password = request.POST.get('password')
     
@@ -25,6 +29,7 @@ def login_page(request):
             return redirect('/login/')
     
         user = authenticate(username = username, password = password)
+        CURRENT_USER = user
 
         if user is None:
             messages.error(request, "Invalid Password")
@@ -123,7 +128,7 @@ def password_change_page(request):
 
         user.set_password(password)
         user.save()
-        return redirect ('/password_confirm/')
+        return redirect('/password_confirm/')
         
     return render(request, 'password_change.html')
 
@@ -131,5 +136,41 @@ def password_confirm_page(request):
     return render(request, 'password_confirm.html')
         
 
-        
+def account_information_page(request):
+    global CURRENT_USER, FRIEND_LIST
+    if request.method == 'POST':
+        CURRENT_USER = None
+        FRIEND_LIST = []
+        return redirect('/login/')
+    
+    if (CURRENT_USER == None):
+        return render(request, 'account_information.html')
+    
+    username = CURRENT_USER.username
+    name = CURRENT_USER.get_full_name()
+    email = CURRENT_USER.email
+    return render(request, 'account_information.html', {'username' : username, 'name' : name, 'email' : email})
 
+def friend_list_page(request):
+    global CURRENT_USER, FRIEND_LIST
+    if request.method == 'POST':
+        friend_username = request.POST.get('username')
+
+        if friend_username == CURRENT_USER:
+            messages.error(request, 'You can not have yourself as a friend')
+            return redirect('/friend_list/')
+
+        if not User.objects.filter(username = friend_username).exists():
+            messages.error(request, 'User does not exist')
+            return redirect('/friend_list/')
+        
+        #Send a email to the user being befriended before adding them to the friend list
+        friend_user = User.objects.get(username = friend_username)
+        new_friend = Friends.objects.create(Amigo = friend_user, sharesCalendar = False)
+        FRIEND_LIST.append(new_friend)
+        messages.info(request, "Friend has been added")
+        return redirect('/friend_list/')
+    return render(request, 'friend_list.html', {'friends' : FRIEND_LIST})
+
+
+        

@@ -28,5 +28,6 @@ urlpatterns = [
     path('password_reset/', password_reset_page, name = "password_reset"),
     path('password_change/', password_change_page, name = 'password_change_page'),
     path('password_confirm/', password_confirm_page, name = 'password_confirm_page'),
+    path('account_information/', account_information_page, name = 'account_information_page'),
+    path('friend_list/', friend_list_page, name = 'friend_list_page'),
 ]
-
