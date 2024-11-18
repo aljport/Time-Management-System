@@ -15,8 +15,8 @@ class Calendar_Event(models.Model):
     
 class Notifications(models.Model):
     # links both event and user who get notif / what notif is 
-    event = models.ForeignKey(Calendar_Event, on_delete=models.CASCADE)
-    user = models.ForeignKey(Calendar_Event, on_delete=models.CASCADE)
+    event = models.ForeignKey(Calendar_Event, on_delete=models.CASCADE, related_name='notifications')
+    user = models.ForeignKey(Calendar_Event, on_delete=models.CASCADE, related_name='user_notifications')
     time_sent = models.DateTimeField(auto_now_add=True) 
     notified = models.BooleanField(default=False)
 

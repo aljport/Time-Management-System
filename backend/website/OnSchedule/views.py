@@ -1,6 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
-from .models import Event
 from .forms import EventForm
 from .models import User, Notifications 
 from .utilities import save_user
