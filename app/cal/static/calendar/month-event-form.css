@@ -1,0 +1,63 @@
+.event-form{
+  font-size: 2.7vh;
+  display: flex;
+  flex-direction: column;
+  justify-items: space-evenly;
+  height: 100%;
+  justify-content: space-between;
+  
+}
+
+.field-content{
+  margin-top: 0.5vh;
+  margin-bottom: 0.5vh;
+  display: flex;
+  flex-direction: row;
+  width: 16.5vw;
+  
+}
+
+.form-label{
+
+  margin-bottom: 1vh;
+}
+.date-creation{
+
+  display: flex;
+  flex-direction: column;
+}
+.date-field
+{
+  display: flex;
+  flex-direction: row;
+}
+
+.time-field{
+  display: flex;
+  flex-direction: row;
+}
+
+.date-subcontainer{
+  margin-top: 0.25vh;
+  margin-bottom: 0.25vh;
+  font-size: 1.25vw;
+}
+
+.thin-line{
+  width: 17vw;
+  height: 2px;
+  background: #FFF;
+  margin-top: 0.5vh;
+  margin-bottom: 0.5vh;
+}
+
+.reg-creation{
+  display: flex;
+  flex-direction: column;
+}
+
+.field-error{
+
+  font-size: 0.75vw;
+  color: #ff0000;
+}

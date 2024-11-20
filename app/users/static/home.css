@@ -1,0 +1,14 @@
+.content-container-main{
+
+  display: flex;
+  flex-direction: column;
+  padding-left: 10vw;
+  padding-right: 10vw;
+  padding-top: 5vh;
+
+}
+
+.link-format{
+
+  font-size: 1vw;
+}

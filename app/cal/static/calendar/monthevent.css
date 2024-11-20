@@ -1,0 +1,130 @@
+.month-event-container{
+  width: 24vw;
+  height: 87.3vh;
+  background-color: rgba(255, 102, 102, 0.25);
+  display: flex;
+  justify-content: right;
+  padding-left: 1.25vw;
+  padding-top: 2.2vh;
+  border-top-left-radius: 10px;
+
+}
+
+.outer-container{
+
+  background-color: rgba(255, 102, 102, 0.5);
+  height: 100%;
+  width: 100%;
+  border-top-left-radius: 10px;
+  padding-left: 0.875vw;
+  display: flex;
+  flex-direction: column;
+  color:#fff;
+  font-size: 3.7vh;
+  font-weight: 600;
+  
+}
+
+.outer-info{
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-right: 0.8vw;
+  padding-left: 0.8vw;
+  padding-top: 0.5vh;
+}
+
+.outer-info-container{
+  display: flex;
+
+}
+
+.exit-container{
+  padding-top: 0.150vw;
+}
+
+.inner-container{
+  height: 100%;
+  width: 21.875vw;
+  background-color: rgba(255, 102, 102, 0.65);
+  padding-top: 0.875vw;
+  display: flex;
+  justify-content: right;
+  border-top-left-radius: 10px;
+}
+
+.inner-info{
+  height: 100%;
+  width: 20.5vw;
+  background-color: rgb(255, 102, 102);
+  border-top-left-radius: 10px;
+}
+
+.selected-day-event-container{
+
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  padding-top: 2.8vh;
+  flex-wrap: wrap;
+  color:rgb(255, 102, 102);
+
+
+}
+
+.selected-day-event{
+
+  height: 10.6vh;
+  width: 16.7vw;
+  background-color: white;
+  border-radius: 5px;
+  border: 2px solid #000;
+  display: flex ;
+}
+
+.red-main-event-bar{
+  background-color: #FF6666;
+  width: 7px;
+  border-radius: 4px 0px 0px 4px;
+  height: 100%;
+
+}
+
+.events-container{
+  display: flex;
+  flex-direction: row;
+}
+
+.event-card{
+  padding-left: 0.5vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 100%;
+}
+
+.event-card-time{
+  font-size: 1.3vw;
+}
+
+.event-card-title{
+  font-size: 1.6vw;
+  font-weight: 600;
+
+}
+
+.event-card-location{
+  font-size: 1.1vw;
+}
+
+
+.add-link-container a:visited{
+  text-decoration: none;
+  color: #fff;
+}
+
+.add-link-container a:link{
+  text-decoration: none;
+  color: #fff;
+}
