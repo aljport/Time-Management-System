@@ -1,6 +1,9 @@
 from django import forms
 from .models import Event
 from django.utils import timezone
+from datetime import datetime, timedelta
+from django.core.exceptions import ValidationError
+from .models import Event, Notifications, UnavailableSlot, isTimeAvailable
 
 class EventForm(forms.ModelForm):
     start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
@@ -29,8 +32,30 @@ class EventForm(forms.ModelForm):
                 timezone.datetime.combine(end_date, end_time)
             )
 
-        # Validate that end time is after start time
+        # validate that end time is after start time
         if cleaned_data.get("start_time") and cleaned_data.get("end_time"):
             if cleaned_data["end_time"] <= cleaned_data["start_time"]:
                 self.add_error("end_time", "End time must be after start time.")
         return cleaned_data
+    
+
+class BlockTimeSlotForm(forms.Form):
+    start_time = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
+    duration = forms.IntegerField(min_value=15, max_value=60, help_text='Duration in minutes.')
+    recurrence = forms.ChoiceField(choices=UnavailableSlot.RECURRENCE_CHOICES, required=False, initial='None')
+    description = forms.CharField(max_length=255, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+    def clean_start_time(self):
+        start_time = self.cleaned_data['start_time']
+        if start_time < timezone.now():
+            raise ValidationError("Start time cannot be in the past.")
+
+        # check if slot is available 
+        if self.user and not isTimeAvailable(self.user, start_time, start_time + datetime.timedelta(minutes=self.cleaned_data.get('duration', 0))):
+            raise ValidationError("The selected time slot overlaps with an existing blocked time.")
+        
+        return start_time
