@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>My Calendar Users</title>
+
+  </head>
+
+
+{% if user_list %}
+    <ul>
+    {% for user in user_list %}
+        <li><a href="/cal/{{ user.user_name }}/">{{ user.user_name }}</a></li>
+        <div>
+          hello
+        </div>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No users are available.</p>
+{% endif %}

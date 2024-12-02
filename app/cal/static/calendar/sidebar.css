@@ -1,0 +1,62 @@
+.side-bar{
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 20vw;
+  background-color: #474646;
+  
+}
+
+.side-bar-container{
+  min-height: 100vh;
+  width: 20vw;
+}
+
+.info-bar{
+  height: 6.3vh;
+  padding-top: 2.32vh;
+  padding-left: 0.78125vw;
+  padding-bottom: 1.38vh;
+  padding-right: 1.5vw;
+  display: flex;
+  color:white;
+  font-weight: 500;
+  font-size: 1.875vw;
+  justify-content: space-between;
+}
+
+.current-time{
+  line-height: normal;
+  font-family: Inter;
+}
+
+.mini-calendar-top{
+  display: flex;
+  justify-content: space-between;
+  padding-top: 2.5vh;
+  padding-left: 1.5vw;
+}
+.mini-info{
+  display: flex;
+  flex-direction: row;
+  gap: 0.5vw;
+
+}
+
+.control-panel{
+  min-height: 90vh;
+  width: 18.5vw;
+  background-color: #1C1C1C;
+  border-radius:0px 10px 0px 0px;
+
+}
+
+
+.mini-year{
+  color: #EF4444;
+  font-family: Inter;
+  font-size: 1.5625vw;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 2.1vw;
+}
