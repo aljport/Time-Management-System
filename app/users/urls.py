@@ -14,5 +14,7 @@ urlpatterns = [
     path('password_confirm/', views.password_confirm_page, name = 'password_confirm_page'),
     path('account_information/', views.account_information_page, name = 'account_information_page'),
     path('friend_list/', views.friend_list_page, name = 'friend_list_page'),
-    path('update-friend-list/<int:friend_id>/', views.update_friendList, name='update_friendList'),
+    path('accept_friend/<friend_username>/', views.accept_friend, name='accept_friend'),
+    path('reject_friend/<friend_username>/', views.reject_friend, name='reject_friend'),
+    path('update_friend/<friend_username>/', views.update_friend, name='update_friend'),
 ]

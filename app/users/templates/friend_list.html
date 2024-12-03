@@ -20,15 +20,10 @@
                 <h2>{{friend.Amigo.first_name}} {{friend.Amigo.last_name}}</h2>
                     {% if friend.viewable %}
                         {% if friend.requestPending %}
-                            <h3> The following user wants to be you friend </h3>
-                            <button type="button" class="btn btn-secondary update-btn" data-friend-id="{{ friend.id }}" data-action="accept_request">
-                                Accept
-                            </button>
-                            <button type="button" class="btn btn-secondary update-btn" data-friend-id="{{ friend.id }}" data-action="reject_request">
-                                Reject
-                            </button>
+                            <a href="{% url 'users:accept_friend' friend.Amigo.username %}">Accept Friend Request</a>
+                            <a href="{% url 'users:reject_friend' friend.Amigo.username %}">Reject Friend Request</a>
                         {% else %}
-                            <h3>Button to Go to Friend's Calendar</h3>
+                            <a href="{% url 'users:update_friend' friend.Amigo.username %}">View Calendar</a>
                         {% endif %}
                     {% else %}
                         <h3>You are currently waiting for a response to your friend request to this user</h3>
@@ -44,36 +39,7 @@
                     <input type="text" class="form-control" name="username" id="username" placeholder="Enter Username" required>
                 </div>
 
-                <script>
-                    document.addEventListener("DOMContentLoaded", function() {
-                        const updateButtons = document.querySelectorAll('.update-btn');
                 
-                        updateButtons.forEach(button => {
-                            button.addEventListener('click', function() {
-                                const friendId = button.getAttribute('data-friend-id');
-                                const action = button.getAttribute('data-action');
-                                const csrfToken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
-                
-                                const formData = new FormData();
-                                formData.append('csrfmiddlewaretoken', csrfToken);
-                                formData.append('action', action);
-                
-                                fetch("{% url 'update_friendList' friend_id=friendId %}", {
-                                    method: 'POST',
-                                    body: formData
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    alert(data.message);
-                                })
-                                .catch(error => {
-                                    alert("An error occurred. Please try again.");
-                                    console.error('Error:', error);
-                                });
-                            });
-                        });
-                    });
-                </script>
             </form>
         </div>
     </body>
