@@ -1,15 +1,18 @@
 from django.http import HttpResponse, Http404
 from django.template import loader
-
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+from datetime import datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Event
+from django.core.mail import send_mail
 from .forms import EventForm
 from .models import User, Notifications 
-from .utilities import save_user
-from django.utils import timezone
+from .utilities import isTimeAvailable
 from .forms import EventForm
-
+from .models import Event, Notifications, UnavailableSlot
+from django.http import JsonResponse
 from .date_get import getOffset, getNextOffset, get_week_range, getNextMonth, getNextMonthName, getNextOffsetDate, getPreviousMonth, getPreviousMonthName
 
 import datetime
@@ -516,8 +519,100 @@ def create_event(ev_req):
     return render(ev_req, 'create_event.html', {'form': form})
 
 def create_notifications(event, attendees):
-    notifications = [   
-        Notifications(event=event, user=attendee)
-        for attendee in attendees
-    ]
-    Notifications.objects.bulk_create(notifications)
+    for attendee in attendees:
+        # create the notification
+        notification = Notifications.objects.create(event=event, user=attendee)
+
+        # send email to person attending 
+        send_mail(
+            subject=f"New Event: {event.title}",
+            message=f"You have been invited to the event '{event.title}' starting at {event.start_time}.",
+            from_email='noreply@onschedule.com',  # replace with app email? 
+            recipient_list=[attendee.email], #replace with the user email 
+            fail_silently=False,
+        )
+
+
+def change_meeting_status(request):
+    if request.method == 'POST':
+        meeting_id = request.POST.get('meeting_id')
+        new_status = request.POST.get('status')
+
+        # acceptable status
+        if new_status not in ['Accepted', 'Declined', 'Pending']:
+            return JsonResponse({'status': 'error', 'message': 'Invalid status value.'})
+
+        # error handling
+        meeting = get_object_or_404(Event, id=meeting_id)
+        meeting.status = new_status
+        meeting.save()
+
+        Notifications.objects.create(user=meeting.invitee, message=f"Your meeting request is {new_status}.")
+        Notifications.objects.create(user=meeting.requester, message=f"Your meeting has been {new_status} by the invitee.")
+        
+        return JsonResponse({'status': 'success', 'message': 'Meeting status updated.'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+
+def request_meeting(request):
+    if request.method == 'POST':
+        requester = request.user
+        invitee_id = request.POST.get('invitee_id')
+        start_time = request.POST.get('start_time')
+        end_time = request.POST.get('end_time')
+
+        try:
+            start_time = timezone.make_aware(datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S'))
+            end_time = timezone.make_aware(datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S'))
+        except ValueError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid datetime format. Use YYYY-MM-DD HH:MM:SS'})
+
+        # ensure start time is in the future 
+        if start_time < timezone.now():
+            return JsonResponse({'status': 'error', 'message': 'Start time must be in the future.'})
+
+        # check if invitee exists 
+        try:
+            invitee = User.objects.get(id=invitee_id)
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Invitee does not exist.'})
+
+        if isTimeAvailable(invitee_id, start_time, end_time):
+            Event.objects.create(
+                requester=requester,
+                invitee=invitee,
+                start_time=start_time,
+                end_time=end_time
+            )
+            return JsonResponse({'status': 'success', 'message': 'Meeting request sent.'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'The requested time is not available.'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+        
+
+def block_time_slot(request):
+    if request.method == 'POST':
+        user = request.user
+        start_time_str = request.POST.get('start_time')
+        duration = request.POST.get('duration')
+
+        try:
+            # positive integer only
+            duration = int(duration)
+            if duration <= 0:
+                raise ValueError('Duration must be a positive number.')
+
+            start_time = timezone.make_aware(datetime.strptime(start_time_str, '%Y-%m-%d %H:%M:%S'))
+        except ValueError as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+        end_time = start_time + timedelta(minutes=duration)
+
+        if isTimeAvailable(user, start_time, end_time):
+            try:
+                UnavailableSlot.objects.create(user=user, start_time=start_time, end_time=end_time)
+                return JsonResponse({'status': 'success', 'message': 'Time slot blocked successfully.'})
+            except ValidationError as e:
+                return JsonResponse({'status': 'error', 'message': str(e)})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'The selected time slot overlaps with an existing blocked slot.'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
