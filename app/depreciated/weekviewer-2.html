@@ -1,0 +1,146 @@
+{% extends 'calendar/base.html' %}
+{% load mathfilters %}
+{% load static %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{% static 'calendar/weekview.css' %}">
+
+
+{% endblock %}
+
+{% block content %}
+
+<div class = "week-container">
+  
+  <div class="calendar-grid-week-container">
+    {% for day_name in day_names %}
+    <div>
+      {{ day_name }}
+    </div>
+    {% endfor %}   
+  </div>
+
+  <div class="calendar-grid-week-container">
+    {% for date in day_nums %}
+    <div>
+      {{ date }}
+    </div>
+    {% endfor %}   
+  </div>
+
+  <div class="long-week-event-container">
+    
+    <div class="grid">
+      {% for date in day_nums %}
+        <div class="weekday">
+          {% for event in events|find_ongoing_long_event:date %}
+            <div class="long-event-container  ">
+
+            </div>
+          {% endfor %}
+        </div>
+
+        
+        
+      
+      <!--
+        
+      To figure out the stacking, call the events for the given day here. Order then by start dates then stack like that unless one has defined order?
+      -->
+      {% for event in events|find_ongoing_long_event:date %}
+      <div class="long-event" id="{{event.title}}" style="left: {{ event|calculate_long_left_value:start_of_week }}; right: {{ event|calculate_long_right_value:end_of_week }}">
+        {{ event }} {{event.start_time.day }} {{ event.end_time.day }}
+      </div>
+
+      {% endfor %}
+      
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="week-grid-container">
+
+
+    <div class="week-columns">
+
+      <div class="week-hours">
+
+        
+      </div>
+
+    </div>
+
+    {% for date in day_nums %}
+  
+    
+
+    
+    <div class="week-columns">
+      <div class="week-columns-container">
+
+
+
+        {% for event in events|find_ongoing_day_event:date %}
+      
+      <div class="week-event-container " style="top: {{ event|calculate_top_value:date }}; bottom: {{ event|calculate_bottom_value:date }}">
+      <div>
+        {{ event }}
+      </div>
+      <div>
+        {{ event|calculate_est_begin }}
+      </div>
+      <div>
+        {{ event|calculate_est_end:date }}
+      </div>
+      </div>
+
+      {% endfor %}
+      </div>
+      
+      
+    </div>
+    
+
+
+    
+    
+    
+
+    
+    
+    {% endfor %}
+  </div>
+
+
+</div>
+{% endblock %}
+
+<!--
+      <div class="week-hours">
+        {% with current_num=forloop.counter %}
+        
+        {% for hour in hours %}
+        {% if today_date == date %}
+        <div class="week-hour current-day">
+          
+
+        </div>
+        {% elif current_num == 1 %}
+        <div class="week-hour weekend">
+          
+          
+        </div>
+        {% elif current_num == 7 %}
+        <div class="week-hour weekend">
+          
+        </div>
+        {% else %}
+        <div class="week-hour">
+          
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endwith %}
+      </div>
+      -->

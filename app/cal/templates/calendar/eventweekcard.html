@@ -1,0 +1,85 @@
+{% extends "calendar/weekviewer.html" %}
+
+{% block title %}
+My Event
+{% endblock %}
+
+{% load static %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{% static 'calendar/weekviewer.css' %}">
+<link rel="stylesheet" href="{% static 'calendar/weekview.css' %}">
+<link rel="stylesheet" href="{% static 'calendar/monthevent.css' %}"> 
+{% endblock %}
+
+{% block weekevent_id %}
+
+{% load mathfilters %}
+
+<div class="event-wrapper">
+<div class="month-event-container">
+  
+  <div class="outer-container">
+    <div class="outer-info-container">
+      {% url 'cal:weekviewer' month_date=start_month_value day_date=start_day_value year_date=start_year_value as week_viewer %}
+      <div class="exit-container">
+        <a href ="{{ week_viewer }}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="31" height="31" viewBox="0 0 31 31" fill="none">
+          <circle cx="15.5" cy="15.5" r="15.5" fill="#DC2626"/>
+          <circle cx="15.5" cy="15.5" r="15.5" fill="black" fill-opacity="0.2"/>
+          <path d="M13.7358 12.0909L15.7386 15.9048L17.7912 12.0909H20.8949L17.7344 17.5455L20.9801 23H17.8906L15.7386 19.2287L13.6222 23H10.4972L13.7358 17.5455L10.6108 12.0909H13.7358Z" fill="white"/>
+          </svg>
+        </a>
+      </div>
+      <div class="outer-info">
+        {{ start_date }}
+      </div>
+      <div class="add-link-container">
+      </div>
+    </div>
+    <div class="inner-container">
+      <div class="inner-info">
+        <div class="">
+          
+          {{ selected_event.title }}
+          {{ selected_event.user_created }}
+        </div>
+        <div class="" 
+        <div>
+
+          {{ selected_event.start_time }}
+          {{ selected_event.location }}
+        </div>
+      
+
+
+        <div>
+
+          {{ selected_event.description }}
+
+        </div>
+
+        <div>
+          {% for user in selected_event.attendee.all %}
+          <div>
+            {{ user }}
+          </div>
+          {% endfor %}
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+</div>
+</div>
+
+
+
+
+
+{% endblock %}

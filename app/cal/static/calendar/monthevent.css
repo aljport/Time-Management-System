@@ -128,3 +128,16 @@
   text-decoration: none;
   color: #fff;
 }
+
+.events-container a:link{
+  text-decoration: none;
+  color: rgb(255, 102, 102);
+}
+.events-container a:visited{
+  text-decoration: none;
+  color: rgb(255, 102, 102);
+}
+
+.event-wrapper{
+  margin-left: 1vw;
+}

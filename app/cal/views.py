@@ -14,6 +14,7 @@ from .date_get import getOffset, getNextOffset, get_week_range, getNextMonth, ge
 
 import datetime
 import calendar
+import json
 
 
 from .models import User
@@ -58,6 +59,7 @@ def weekview(request, month_date=int(datetime.datetime.now().strftime('%m')),
   day_names = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
   specific_date = datetime.datetime(year_date, month_date, day_date)
   start_of_week = specific_date - datetime.timedelta(days=(specific_date.weekday() + 1) % 7)
+  end_of_week = start_of_week + datetime.timedelta(days=7)
   start_month_value = start_of_week.strftime('%m')
   start_day_value = start_of_week.strftime('%d')
   start_year_value = start_of_week.strftime('%Y')
@@ -84,7 +86,13 @@ def weekview(request, month_date=int(datetime.datetime.now().strftime('%m')),
   prev_week_month = prev_week_end.strftime('%m')
   prev_week_year = prev_week_end.strftime('%Y')
 
+  
+  
+  week_events = Event.objects.filter(start_time__lt=end_of_week, end_time__gte=start_of_week)
+
   context = {
+    "start_of_week" : start_of_week,
+    "end_of_week" : end_of_week,
     "current_month_value" : current_month_value,
     "current_day_value" : current_day_value,
     "current_year_value" : current_year_value,
@@ -105,10 +113,89 @@ def weekview(request, month_date=int(datetime.datetime.now().strftime('%m')),
     "start_month_value" : start_month_value,
     "start_day_value" : start_day_value,
     "start_year_value" : start_year_value,
+    "events" : week_events,
+
+
   }
 
   return render(request, "calendar/weekviewer.html", context)
 
+def eventweekcard(request, month_date=int(datetime.datetime.now().strftime('%m')), 
+               day_date=int(datetime.datetime.now().strftime('%d')), 
+               year_date=int(datetime.datetime.now().strftime('%Y')), event_id = Event.objects.first()):
+  
+  start_month_date = month_date
+  start_day_date = day_date
+  start_year_date = year_date
+
+  hour_num = list(range(0, 24))
+  day_names = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+  specific_date = datetime.datetime(year_date, month_date, day_date)
+  start_of_week = specific_date - datetime.timedelta(days=(specific_date.weekday() + 1) % 7)
+  end_of_week = start_of_week + datetime.timedelta(days=7)
+  start_month_value = start_of_week.strftime('%m')
+  start_day_value = start_of_week.strftime('%d')
+  start_year_value = start_of_week.strftime('%Y')
+
+  first_date = get_week_range(specific_date)
+  current_month_name = datetime.datetime.today().strftime("%B") 
+
+
+  #Checks if it is the current date
+  now = datetime.datetime.now()
+  current_month_value = now.strftime('%m')
+  current_day_value = now.strftime('%d')
+  current_year_value = now.strftime('%Y')
+  current_day_name = datetime.datetime.today().strftime("%A")
+  days = [int((start_of_week + datetime.timedelta(days=i)).strftime('%d')) for i in range(7)]
+
+  next_week_start = start_of_week + datetime.timedelta(days=7)
+  next_week_day = next_week_start.strftime('%d')
+  next_week_month = next_week_start.strftime('%m')
+  next_week_year = next_week_start.strftime('%Y')
+
+  prev_week_end = start_of_week - datetime.timedelta(days=1)
+  prev_week_date = prev_week_end.strftime('%d')
+  prev_week_month = prev_week_end.strftime('%m')
+  prev_week_year = prev_week_end.strftime('%Y')
+
+  week_events = Event.objects.filter(start_time__lt=end_of_week, end_time__gte=start_of_week)
+
+  selected_event = Event.objects.filter(pk=event_id)
+  my_event = selected_event.first()
+  
+  context = {
+    "start_month_date" : start_month_date,
+    "start_day_date" : start_day_date,  
+    "start_year_date": start_year_date,
+    "start_of_week" : start_of_week,
+    "end_of_week" : end_of_week,
+    "current_month_value" : current_month_value,
+    "current_day_value" : current_day_value,
+    "current_year_value" : current_year_value,
+    "day_names" : day_names,
+    "day_nums" : days,
+    "hours" : hour_num,
+    "today_date" : timezone.now().day,
+    "today_name"  : current_day_name,
+    "first" : first_date,
+    "current_month" : current_month_name,
+    "next_week_day" : next_week_day,
+    "next_week_month" : next_week_month,
+    "next_week_year" : next_week_year,
+    "prev_week_day" : prev_week_date,
+    "prev_week_month" : prev_week_month,
+    "prev_week_year" : prev_week_year,
+    "prev_date" : prev_week_end.strftime('%d'),
+    "start_month_value" : start_month_value,
+    "start_day_value" : start_day_value,
+    "start_year_value" : start_year_value,
+    "events" : week_events,
+    "selected_event" : my_event,
+
+  }
+
+  return render(request, "calendar/eventweekcard.html", context)
 
 def monthviewer(request, month_date=int(datetime.datetime.now().strftime('%m')), 
                 day_date=int(datetime.datetime.now().strftime('%d')), 
@@ -157,8 +244,6 @@ def monthviewer(request, month_date=int(datetime.datetime.now().strftime('%m')),
   offset_nums = list(range( prev_date - int(offset) + 1, prev_date + 1))
 
   next_month = getNextMonth(start_date, current_month_days)
-  next_date = calendar.monthrange(next_month.year, next_month.month)[1]
-  next_month_date = getNextMonthName(start_date, current_month_days)
 
   next_month_value = next_month.strftime('%m')
   next_day_value = next_month.strftime('%d')
@@ -382,11 +467,110 @@ def monthevent(request, month_date, day_date, year_date, selected_day):
     "next_month_events" : next_month_events,
     "prev_month_events" :prev_month_events,
     "current_day_event" : current_day_event,
-
-
   }
   return render(request, "calendar/monthevent.html", context)
 
+def eventmonthcard(request, month_date, day_date, year_date, event_id):
+   
+  #passed in Information
+  start_month_date = month_date
+  start_day_date = day_date
+  start_year_date =  year_date
+
+  start_date = datetime.date(start_year_date, start_month_date, start_day_date)
+  first_day_of_month = start_date.replace(day=1)
+  weekday_name = first_day_of_month.strftime('%A')
+  start_month_name = start_date.strftime('%B')
+
+  start_month_value = start_date.strftime('%m')
+  start_day_value = start_date.strftime('%d')
+  start_year_value = start_date.strftime('%Y')
+
+  start_month_abv = start_date.strftime('%b')
+
+  current_month_days = calendar.monthrange(start_year_date, start_month_date)[1]
+  days = list(range(1, current_month_days + 1))
+
+  #Get current date
+  now = datetime.datetime.now()
+  current_month = now.strftime('%B')
+  current_month_value = now.strftime('%m')
+  current_day_value = now.strftime('%d')
+  current_year_value = now.strftime('%Y')
+  #List of days in the week
+  day_names = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+
+  prev_month = getPreviousMonth(start_date)
+  prev_date = calendar.monthrange(prev_month.year, prev_month.month)[1]
+  prev_month_name = getPreviousMonthName(start_date)
+
+  prev_month_value = prev_month.strftime('%m')
+  prev_day_value = prev_month.strftime('%d')
+  prev_year_value = prev_month.strftime('%Y')
+
+  #previous month offsets
+  offset = getOffset(weekday_name)
+  offset_nums = list(range( prev_date - int(offset) + 1, prev_date + 1))
+
+  next_month = getNextMonth(start_date, current_month_days)
+  next_date = calendar.monthrange(next_month.year, next_month.month)[1]
+  next_month_date = getNextMonthName(start_date, current_month_days)
+
+  next_month_value = next_month.strftime('%m')
+  next_day_value = next_month.strftime('%d')
+  next_year_value = next_month.strftime('%Y')
+
+  last_day = start_date.replace(day=current_month_days)
+
+  next_offset = getNextOffsetDate(last_day.strftime('%A'))
+  next_offset_nums = list(range(1, next_offset + 1 ))
+
+  month_events = Event.objects.filter(start_time__month=month_date)
+
+  next_month_events = Event.objects.filter(start_time__month=next_month_value)
+  prev_month_events = Event.objects.filter(start_time__month=prev_month_value)
+
+  selected_event = Event.objects.filter(pk=event_id)
+  my_event = selected_event.first()
+
+  context = {
+    "start_month_date" : start_month_date,
+    "start_day_date" : start_day_date,
+    "start_year_date" : start_year_date,
+    "start_month_abv" : start_month_abv,
+    "start_month_name" : start_month_name,
+    "current_month_value" : current_month_value,
+    "current_day_value" : current_day_value,
+    "current_year_value" : current_year_value,
+    "start_month_value" : start_month_value,
+    "start_day_value" : start_day_value,
+    "start_year_value" : start_year_value,
+    "day_names" : day_names,
+    "weekday_name" : weekday_name,
+    "prev_month_name": prev_month_name,
+    "day_offset" : offset,
+    "offset_numbers" : offset_nums,
+    "days_list" : days,
+    "date" : timezone.now().day,
+    "current_month" : current_month,
+    "current_days" : current_month_days,
+    "next_offset" : next_offset,
+    "next_offset_nums" : next_offset_nums,
+    "next_month" : next_month,
+    "prev_month_value" : prev_month_value,
+    "prev_day_value" : prev_day_value,
+    "prev_year_value" : prev_year_value,
+    "next_month_value" : next_month_value,
+    "next_day_value" : next_day_value,
+    "next_year_value" : next_year_value,
+    "month_events" :month_events,
+    "next_month_events" : next_month_events,
+    "prev_month_events" :prev_month_events,
+    "selected_event" : my_event,
+    "id" : event_id
+  }
+
+  return render(request, "calendar/eventmonthcard.html", context)
 
 def create_event_card(request, month_date, day_date, year_date, selected_day):
 

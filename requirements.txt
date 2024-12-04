@@ -9,6 +9,7 @@ django-admin-tools>=0.9.3,<1.0
 coverage>=7.4.1,<7.5
 Pillow>=10.2.0,<10.3
 django-mathfilters
+pytz
 
 # Kafka
 quixstreams>=2.9.0,<2.10

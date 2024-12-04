@@ -1,0 +1,23 @@
+.week-container{
+
+  position:relative;
+  height: 93.5vh;
+
+}
+
+.calendar {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  border: 1px solid #ccc;
+}
+
+.event {
+  position: absolute;
+  border: 1px solid #007BFF;
+  background-color: #007BFF;
+  color: white;
+  padding: 5px;
+  box-sizing: border-box;
+  overflow: hidden;
+}

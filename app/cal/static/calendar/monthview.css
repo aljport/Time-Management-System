@@ -35,6 +35,10 @@
   background-color: #f0f0f0;
 }
 
+.calendar-grid-name-container .weekend{
+  background-color: #f0f0f0;
+}
+
 .calendar-grid-container .current-day{
   background-color: #eff6ff;
 }

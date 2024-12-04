@@ -1,0 +1,132 @@
+.week-day-container
+{
+  border-left: 0.5px solid #E0E0E0;
+  border-right: 0.5px solid #E0E0E0;
+}
+
+.calendar-grid-week-container
+{
+  display: grid;
+  
+  grid-template-columns: repeat(7, 1fr);
+  padding-left: 0.5625vw;
+  padding-right: 0.5625vw;
+  
+}
+
+.calendar-grid-week-container .weekend{
+  background-color: #f0f0f0;
+}
+
+.calendar-grid-week-container .current-day{
+  background-color: #eff6ff;
+}
+
+.calendar-grid-week-container .past-month-day{
+  color: #7c7c7c;
+
+}
+.week-name{
+  min-height: 1vh;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  font-size: 1.5vh;
+  padding-left: 0.25vw;
+  color:#474646;
+}
+
+.week-container{
+  display: flex;
+}
+
+.week-grid-container{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+.week-day{
+  height: 7.5vh;
+  border: 0.5px solid #E0E0E0;
+  
+}
+.big-container{
+  display: flex;
+  width: 100%;
+}
+
+.hour-time{
+  width: 3.5vw;
+}
+
+.week-layout{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+.week-hour-container{
+  min-width: 3vw;
+  display: flex;
+  flex-direction: column;
+  height: 85vh;
+}
+
+.week-hour-display{
+  height: 7.5vh;
+  margin: auto;
+}
+
+.calendar-grid-number-container{
+  height: 85vh;
+  overflow-y: scroll;
+  width: 100%;
+}
+
+
+.week-layout .calendar-grid-container
+{
+  display: grid;
+  
+  grid-template-columns: repeat(7, 1fr);
+  padding-left: 0.5625vw;
+  padding-right: 0.5625vw;
+  
+  height: 100%;
+  width: 100%;
+}
+.calendar-week-container
+{
+  display: grid;
+  
+  grid-template-columns: repeat(7, 1fr);
+  padding-left: 0.5625vw;
+}
+
+.calendar-grid-number-container::-webkit-scrollbar {
+  width: 0.5vw;
+  padding-right: 0.5625vw;
+}
+
+.calendar-grid-number-container::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+.calendar-grid-number-container::-webkit-scrollbar-thumb {
+  background: #b9b9b9;
+  border-radius: 10px;
+}
+
+.calendar-grid-number-container::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+
+.week-layout .calendar-grid-container{
+  display: grid;
+  
+  grid-template-columns: repeat(7, 1fr);
+  padding-left: 0.5625vw;
+  padding-right: 0.5625vw;
+  height: 100%;
+  min-height: 7.5vh;
+}
