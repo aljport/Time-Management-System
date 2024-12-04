@@ -6,6 +6,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Event
+from django.core.mail import send_mail
 from .forms import EventForm
 from .models import User, Notifications 
 from .utilities import isTimeAvailable
@@ -518,11 +519,18 @@ def create_event(ev_req):
     return render(ev_req, 'create_event.html', {'form': form})
 
 def create_notifications(event, attendees):
-    notifications = [   
-        Notifications(event=event, user=attendee)
-        for attendee in attendees
-    ]
-    Notifications.objects.bulk_create(notifications)
+    for attendee in attendees:
+        # create the notification
+        notification = Notifications.objects.create(event=event, user=attendee)
+
+        # send email to person attending 
+        send_mail(
+            subject=f"New Event: {event.title}",
+            message=f"You have been invited to the event '{event.title}' starting at {event.start_time}.",
+            from_email='noreply@onschedule.com',  # replace with app email? 
+            recipient_list=[attendee.email], #replace with the user email 
+            fail_silently=False,
+        )
 
 
 def change_meeting_status(request):
