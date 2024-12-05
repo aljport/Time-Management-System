@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.functions import Now
 from django.utils import timezone
+from users.models import Profile, Friends
 
 import datetime
 
@@ -13,9 +14,9 @@ class Event(models.Model):
     description = models.TextField(blank=True)
     start_time = models.DateTimeField(default=timezone.now)
     end_time = models.DateTimeField(default= timezone.now() + datetime.timedelta(hours=1))
-    user_created = models.ForeignKey(User, on_delete=models.CASCADE, null=True) 
+    user_created = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, related_name='created_events')
     id = models.AutoField(primary_key=True)
-    attendee = models.ManyToManyField(User, related_name='events', blank=True)
+    attendee = models.ManyToManyField(Profile, related_name='events', blank=True)
     location= models.CharField(max_length=200, null=True)
 
 

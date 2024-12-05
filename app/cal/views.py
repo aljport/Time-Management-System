@@ -4,12 +4,12 @@ from django.template import loader
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Event
-from .forms import EventForm
+from .forms import EventForm, AttendeeForm, EditEventForm
 from .models import User, Notifications 
 from .utilities import save_user
 from django.utils import timezone
 from .forms import EventForm
-
+from django.http import JsonResponse
 from .date_get import getOffset, getNextOffset, get_week_range, getNextMonth, getNextMonthName, getNextOffsetDate, getPreviousMonth, getPreviousMonthName
 
 import datetime
@@ -86,9 +86,11 @@ def weekview(request, month_date=int(datetime.datetime.now().strftime('%m')),
   prev_week_month = prev_week_end.strftime('%m')
   prev_week_year = prev_week_end.strftime('%Y')
 
+  current_user = request.user 
+  current_user_events = current_user.profile.created_events.all()
+
   
-  
-  week_events = Event.objects.filter(start_time__lt=end_of_week, end_time__gte=start_of_week)
+  week_events = current_user_events.filter(start_time__lt=end_of_week, end_time__gte=start_of_week)
 
   context = {
     "start_of_week" : start_of_week,
@@ -114,7 +116,7 @@ def weekview(request, month_date=int(datetime.datetime.now().strftime('%m')),
     "start_day_value" : start_day_value,
     "start_year_value" : start_year_value,
     "events" : week_events,
-
+    "current_user" : current_user,
 
   }
 
@@ -123,10 +125,6 @@ def weekview(request, month_date=int(datetime.datetime.now().strftime('%m')),
 def eventweekcard(request, month_date=int(datetime.datetime.now().strftime('%m')), 
                day_date=int(datetime.datetime.now().strftime('%d')), 
                year_date=int(datetime.datetime.now().strftime('%Y')), event_id = Event.objects.first()):
-  
-  start_month_date = month_date
-  start_day_date = day_date
-  start_year_date = year_date
 
   hour_num = list(range(0, 24))
   day_names = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
@@ -159,15 +157,18 @@ def eventweekcard(request, month_date=int(datetime.datetime.now().strftime('%m')
   prev_week_month = prev_week_end.strftime('%m')
   prev_week_year = prev_week_end.strftime('%Y')
 
-  week_events = Event.objects.filter(start_time__lt=end_of_week, end_time__gte=start_of_week)
+  current_user = request.user
+  current_user_events = current_user.profile.created_events.all()
 
-  selected_event = Event.objects.filter(pk=event_id)
+  week_events = current_user_events.filter(start_time__lt=end_of_week, end_time__gte=start_of_week)
+
+  selected_event = current_user_events.filter(pk=event_id)
   my_event = selected_event.first()
   
   context = {
-    "start_month_date" : start_month_date,
-    "start_day_date" : start_day_date,  
-    "start_year_date": start_year_date,
+    "start_month_dates" : 11,
+    "start_day_date" : start_day_value,  
+    "start_year_date": start_year_value,
     "start_of_week" : start_of_week,
     "end_of_week" : end_of_week,
     "current_month_value" : current_month_value,
@@ -192,7 +193,7 @@ def eventweekcard(request, month_date=int(datetime.datetime.now().strftime('%m')
     "start_year_value" : start_year_value,
     "events" : week_events,
     "selected_event" : my_event,
-
+    "current_user" : current_user,
   }
 
   return render(request, "calendar/eventweekcard.html", context)
@@ -254,14 +255,18 @@ def monthviewer(request, month_date=int(datetime.datetime.now().strftime('%m')),
   next_offset = getNextOffsetDate(last_day.strftime('%A'))
   next_offset_nums = list(range(1, next_offset + 1 ))
 
-  todays_events = Event.objects.filter(start_time__month=month_date, start_time__day=day_date)
+  #gets current logged in user
+  current_user = request.user
+  current_user_events = current_user.profile.created_events.all()
 
-  month_events = Event.objects.filter(start_time__month=month_date)
+  todays_events = current_user_events.filter(start_time__month=month_date, start_time__day=day_date)
 
-  next_month_events = Event.objects.filter(start_time__month=next_month_value)
-  prev_month_events = Event.objects.filter(start_time__month=prev_month_value)
+  month_events = current_user_events.filter(start_time__month=month_date)
 
+  next_month_events = current_user_events.filter(start_time__month=next_month_value)
+  prev_month_events = current_user_events.filter(start_time__month=prev_month_value)
 
+  
   context = {
     "start_month_date" : start_month_date,
     "start_day_date" : start_day_date,
@@ -296,6 +301,7 @@ def monthviewer(request, month_date=int(datetime.datetime.now().strftime('%m')),
     "month_events" :month_events,
     "next_month_events" : next_month_events,
     "prev_month_events" :prev_month_events,
+    "current_user" : current_user,
   }
 
   return render(request, "calendar/monthviewer.html", context)
@@ -417,14 +423,17 @@ def monthevent(request, month_date, day_date, year_date, selected_day):
   next_offset = getNextOffsetDate(last_day.strftime('%A'))
   next_offset_nums = list(range(1, next_offset + 1 ))
 
-  todays_events = Event.objects.filter(start_time__month=month_date, start_time__day=day_date)
+  current_user = request.user
+  current_user_events = current_user.profile.created_events.all()
 
-  month_events = Event.objects.filter(start_time__month=month_date)
+  todays_events = current_user_events.filter(start_time__month=month_date, start_time__day=day_date)
 
-  next_month_events = Event.objects.filter(start_time__month=next_month_value)
-  prev_month_events = Event.objects.filter(start_time__month=prev_month_value)
+  month_events = current_user_events.filter(start_time__month=month_date)
 
-  current_day_event= Event.objects.filter(start_time__month=month_date, start_time__day=selected_day)
+  next_month_events = current_user_events.filter(start_time__month=next_month_value)
+  prev_month_events = current_user_events.filter(start_time__month=prev_month_value)
+
+  current_day_event = current_user_events.filter(start_time__date__lte=datetime.datetime(year_date, month_date, selected_day),end_time__date__gte=datetime.datetime(year_date, month_date, selected_day))
 
   selected_day_event = datetime.date(start_year_date, start_month_date, selected_day)
 
@@ -467,6 +476,7 @@ def monthevent(request, month_date, day_date, year_date, selected_day):
     "next_month_events" : next_month_events,
     "prev_month_events" :prev_month_events,
     "current_day_event" : current_day_event,
+    "current_user" : current_user,
   }
   return render(request, "calendar/monthevent.html", context)
 
@@ -476,7 +486,7 @@ def eventmonthcard(request, month_date, day_date, year_date, event_id):
   start_month_date = month_date
   start_day_date = day_date
   start_year_date =  year_date
-
+  selected_day=int(datetime.datetime.now().strftime('%d'))
   start_date = datetime.date(start_year_date, start_month_date, start_day_date)
   first_day_of_month = start_date.replace(day=1)
   weekday_name = first_day_of_month.strftime('%A')
@@ -525,12 +535,16 @@ def eventmonthcard(request, month_date, day_date, year_date, event_id):
   next_offset = getNextOffsetDate(last_day.strftime('%A'))
   next_offset_nums = list(range(1, next_offset + 1 ))
 
-  month_events = Event.objects.filter(start_time__month=month_date)
 
-  next_month_events = Event.objects.filter(start_time__month=next_month_value)
-  prev_month_events = Event.objects.filter(start_time__month=prev_month_value)
+  current_user = request.user
+  current_user_events = current_user.profile.created_events.all()
 
-  selected_event = Event.objects.filter(pk=event_id)
+  month_events = current_user_events.filter(start_time__month=month_date)
+
+  next_month_events = current_user_events.filter(start_time__month=next_month_value)
+  prev_month_events = current_user_events.filter(start_time__month=prev_month_value)
+
+  selected_event = current_user_events.filter(pk=event_id)
   my_event = selected_event.first()
 
   context = {
@@ -567,10 +581,12 @@ def eventmonthcard(request, month_date, day_date, year_date, event_id):
     "next_month_events" : next_month_events,
     "prev_month_events" :prev_month_events,
     "selected_event" : my_event,
-    "id" : event_id
+    "id" : event_id,
+    "current_user" : current_user,
+    "selected_day" : selected_day,
   }
 
-  return render(request, "calendar/eventmonthcard.html", context)
+  return render(request, "calendar/eventcardmonthdefault.html", context)
 
 def create_event_card(request, month_date, day_date, year_date, selected_day):
 
@@ -617,18 +633,21 @@ def create_event_card(request, month_date, day_date, year_date, selected_day):
   next_offset = getNextOffsetDate(last_day.strftime('%A'))
   next_offset_nums = list(range(1, next_offset + 1 ))
 
-  todays_events = Event.objects.filter(start_time__month=month_date, start_time__day=day_date)
-  month_events = Event.objects.filter(start_time__month=month_date)
-  next_month_events = Event.objects.filter(start_time__month=next_month_value)
-  prev_month_events = Event.objects.filter(start_time__month=prev_month_value)
-  current_day_event= Event.objects.filter(start_time__month=month_date, start_time__day=selected_day)
+  current_user = request.user
+  current_user_events = current_user.profile.created_events.all()
+
+  todays_events = current_user_events.filter(start_time__month=month_date, start_time__day=day_date)
+  month_events = current_user_events.filter(start_time__month=month_date)
+  next_month_events = current_user_events.filter(start_time__month=next_month_value)
+  prev_month_events = current_user_events.filter(start_time__month=prev_month_value)
+  current_day_event= current_user_events.filter(start_time__month=month_date, start_time__day=selected_day)
   selected_day_event = datetime.date(start_year_date, start_month_date, selected_day)
 
   if request.method == "POST":
         form = EventForm(request.POST)
         if form.is_valid():
             event = form.save(commit=False)
-            event.user_created = request.user  # Set the user who created the event
+            event.user_created = request.user.profile  # Set the user who created the event
             event.save()  # Save the event to the database
             return redirect(f'/cal/month/{month_date}/{day_date}/{year_date}/{selected_day}')
   else:
@@ -674,10 +693,257 @@ def create_event_card(request, month_date, day_date, year_date, selected_day):
     "prev_month_events" :prev_month_events,
     "current_day_event" : current_day_event,
     "form" : rendered_form,
-
+    "current_user" : current_user,
   }
 
   return render(request, "calendar/eventcreatecard.html", context)
+
+
+def editevent(request, month_date, day_date, year_date, event_id, selected_day=int(datetime.datetime.now().strftime('%d'))):
+   
+
+  #passed in Information
+  start_month_date = month_date
+  start_day_date = day_date
+  start_year_date =  year_date
+  start_date = datetime.date(start_year_date, start_month_date, start_day_date)
+  first_day_of_month = start_date.replace(day=1)
+  weekday_name = first_day_of_month.strftime('%A')
+  start_month_name = start_date.strftime('%B')
+  start_month_value = start_date.strftime('%m')
+  start_day_value = start_date.strftime('%d')
+  start_year_value = start_date.strftime('%Y')
+  start_month_abv = start_date.strftime('%b')
+  current_month_days = calendar.monthrange(start_year_date, start_month_date)[1]
+  days = list(range(1, current_month_days + 1))
+
+  #Get current date
+  now = datetime.datetime.now()
+  current_month = now.strftime('%B')
+  current_month_value = now.strftime('%m')
+  current_day_value = now.strftime('%d')
+  current_year_value = now.strftime('%Y')
+  #List of days in the week
+  day_names = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+
+  prev_month = getPreviousMonth(start_date)
+  prev_date = calendar.monthrange(prev_month.year, prev_month.month)[1]
+  prev_month_name = getPreviousMonthName(start_date)
+  prev_month_value = prev_month.strftime('%m')
+  prev_day_value = prev_month.strftime('%d')
+  prev_year_value = prev_month.strftime('%Y')
+
+  #previous month offsets
+  offset = getOffset(weekday_name)
+  offset_nums = list(range( prev_date - int(offset) + 1, prev_date + 1))
+
+  next_month = getNextMonth(start_date, current_month_days)
+  next_month_value = next_month.strftime('%m')
+  next_day_value = next_month.strftime('%d')
+  next_year_value = next_month.strftime('%Y')
+  last_day = start_date.replace(day=current_month_days)
+  next_offset = getNextOffsetDate(last_day.strftime('%A'))
+  next_offset_nums = list(range(1, next_offset + 1 ))
+
+  current_user = request.user
+  current_user_events = current_user.profile.created_events.all()
+
+  #Month Events
+  todays_events = current_user_events.filter(start_time__month=month_date, start_time__day=day_date)
+  month_events = current_user_events.filter(start_time__month=month_date)
+  next_month_events = current_user_events.filter(start_time__month=next_month_value)
+  prev_month_events = current_user_events.filter(start_time__month=prev_month_value)
+  current_day_event = current_user_events.filter(start_time__date__lte=datetime.datetime(year_date, month_date, selected_day),end_time__date__gte=datetime.datetime(year_date, month_date, selected_day))
+  selected_day_event = datetime.date(start_year_date, start_month_date, selected_day)
+
+  #Week Information
+
+  if request.method == "POST":
+        event = get_object_or_404(Event, pk=event_id)
+        form = EditEventForm(request.POST, instance=event)
+        if form.is_valid():
+            form.save()
+            return redirect(f'/cal/month/{month_date}/{day_date}/{year_date}/event/{event_id}')
+  else:
+      form = EditEventForm()
+  
+  #rendered_form = form.render("calendar/month_event_format.html")
+
+  context = {
+    "start_month_date" : start_month_date,
+    "start_day_date" : start_day_date,
+    "start_year_date" : start_year_date,
+    "start_month_abv" : start_month_abv,
+    "start_month_name" : start_month_name,
+    "current_month_value" : current_month_value,
+    "current_day_value" : current_day_value,
+    "current_year_value" : current_year_value,
+    "start_month_value" : start_month_value,
+    "start_day_value" : start_day_value,
+    "start_year_value" : start_year_value,
+    "day_names" : day_names,
+    "weekday_name" : weekday_name,
+    "prev_month_name": prev_month_name,
+    "day_offset" : offset,
+    "offset_numbers" : offset_nums,
+    "days_list" : days,
+    "date" : timezone.now().day,
+    "current_month" : current_month,
+    "current_days" : current_month_days,
+    "next_offset" : next_offset,
+    "next_offset_nums" : next_offset_nums,
+    "next_month" : next_month,
+    "prev_month_value" : prev_month_value,
+    "prev_day_value" : prev_day_value,
+    "prev_year_value" : prev_year_value,
+    "next_month_value" : next_month_value,
+    "next_day_value" : next_day_value,
+    "next_year_value" : next_year_value,
+    "todays_events" : todays_events,
+    "month_events" :month_events,
+    "next_month_events" : next_month_events,
+    "prev_month_events" :prev_month_events,
+    "current_day_event" : current_day_event,
+    "form" : form,
+    "current_user" : current_user,
+  }
+
+
+  return render(request, "calendar/editevent.html", context)
+
+
+def modifyattendees(request, month_date, day_date, year_date, event_id, selected_day=int(datetime.datetime.now().strftime('%d'))):
+   
+  #passed in Information
+  start_month_date = month_date
+  start_day_date = day_date
+  start_year_date =  year_date
+  start_date = datetime.date(start_year_date, start_month_date, start_day_date)
+  first_day_of_month = start_date.replace(day=1)
+  weekday_name = first_day_of_month.strftime('%A')
+  start_month_name = start_date.strftime('%B')
+  start_month_value = start_date.strftime('%m')
+  start_day_value = start_date.strftime('%d')
+  start_year_value = start_date.strftime('%Y')
+  start_month_abv = start_date.strftime('%b')
+  current_month_days = calendar.monthrange(start_year_date, start_month_date)[1]
+  days = list(range(1, current_month_days + 1))
+
+  #Get current date
+  now = datetime.datetime.now()
+  current_month = now.strftime('%B')
+  current_month_value = now.strftime('%m')
+  current_day_value = now.strftime('%d')
+  current_year_value = now.strftime('%Y')
+  #List of days in the week
+  day_names = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+
+  prev_month = getPreviousMonth(start_date)
+  prev_date = calendar.monthrange(prev_month.year, prev_month.month)[1]
+  prev_month_name = getPreviousMonthName(start_date)
+  prev_month_value = prev_month.strftime('%m')
+  prev_day_value = prev_month.strftime('%d')
+  prev_year_value = prev_month.strftime('%Y')
+
+  #previous month offsets
+  offset = getOffset(weekday_name)
+  offset_nums = list(range( prev_date - int(offset) + 1, prev_date + 1))
+
+  next_month = getNextMonth(start_date, current_month_days)
+  next_month_value = next_month.strftime('%m')
+  next_day_value = next_month.strftime('%d')
+  next_year_value = next_month.strftime('%Y')
+  last_day = start_date.replace(day=current_month_days)
+  next_offset = getNextOffsetDate(last_day.strftime('%A'))
+  next_offset_nums = list(range(1, next_offset + 1 ))
+
+  current_user = request.user
+  current_user_events = current_user.profile.created_events.all()
+
+  todays_events = current_user_events.filter(start_time__month=month_date, start_time__day=day_date)
+  month_events = current_user_events.filter(start_time__month=month_date)
+  next_month_events = current_user_events.filter(start_time__month=next_month_value)
+  prev_month_events = current_user_events.filter(start_time__month=prev_month_value)
+  current_day_event = current_user_events.filter(start_time__date__lte=datetime.datetime(year_date, month_date, selected_day),end_time__date__gte=datetime.datetime(year_date, month_date, selected_day))
+  selected_day_event = datetime.date(start_year_date, start_month_date, selected_day)
+
+  selected_event = current_user_events.filter(pk=event_id)
+  my_event = selected_event.first()
+
+  if request.method == "POST":
+        event = get_object_or_404(Event, pk=event_id)
+        form = AttendeeForm(request.POST, instance=event)
+        if form.is_valid():
+            form.save()
+            return redirect(f'/cal/month/{month_date}/{day_date}/{year_date}/event/{event_id}')
+  else:
+      form = AttendeeForm()
+  
+  rendered_form = form.render("calendar/attendees_form.html")
+
+  context = {
+    "start_month_date" : start_month_date,
+    "start_day_date" : start_day_date,
+    "start_year_date" : start_year_date,
+    "start_month_abv" : start_month_abv,
+    "start_month_name" : start_month_name,
+    "current_month_value" : current_month_value,
+    "current_day_value" : current_day_value,
+    "current_year_value" : current_year_value,
+    "start_month_value" : start_month_value,
+    "start_day_value" : start_day_value,
+    "start_year_value" : start_year_value,
+    "day_names" : day_names,
+    "weekday_name" : weekday_name,
+    "prev_month_name": prev_month_name,
+    "day_offset" : offset,
+    "offset_numbers" : offset_nums,
+    "days_list" : days,
+    "date" : timezone.now().day,
+    "current_month" : current_month,
+    "current_days" : current_month_days,
+    "next_offset" : next_offset,
+    "next_offset_nums" : next_offset_nums,
+    "next_month" : next_month,
+    "prev_month_value" : prev_month_value,
+    "prev_day_value" : prev_day_value,
+    "prev_year_value" : prev_year_value,
+    "next_month_value" : next_month_value,
+    "next_day_value" : next_day_value,
+    "next_year_value" : next_year_value,
+    "todays_events" : todays_events,
+    "month_events" :month_events,
+    "next_month_events" : next_month_events,
+    "prev_month_events" :prev_month_events,
+    "current_day_event" : current_day_event,
+    "form" : form,
+    "current_user" : current_user,
+    "selected_event" : my_event,
+  }
+
+  return render(request, "calendar/modifyattendees.html", context)
+
+
+def agendaview(request):
+
+  if request.user.is_authenticated:
+    # Do something for authenticated users.
+    print("User Logged In!")
+  else:
+    # Do something for anonymous users.
+    print("User Not Logged In!")
+  current_user = request.user
+
+  current_user_events = current_user.profile.created_events.all()
+
+  context ={
+    "user_events": current_user_events,
+    "current_user" : current_user,
+  }
+   
+  return render(request, "calendar/agendaview.html", context)
+
+
 
 def create_event(ev_req):
     if ev_req.method == 'POST':
@@ -705,3 +971,88 @@ def create_notifications(event, attendees):
         for attendee in attendees
     ]
     Notifications.objects.bulk_create(notifications)
+
+
+def change_meeting_status(request):
+    if request.method == 'POST':
+        meeting_id = request.POST.get('meeting_id')
+        new_status = request.POST.get('status')
+
+        # acceptable status
+        if new_status not in ['Accepted', 'Declined', 'Pending']:
+            return JsonResponse({'status': 'error', 'message': 'Invalid status value.'})
+
+        # error handling
+        meeting = get_object_or_404(Event, id=meeting_id)
+        meeting.status = new_status
+        meeting.save()
+
+        Notifications.objects.create(user=meeting.invitee, message=f"Your meeting request is {new_status}.")
+        Notifications.objects.create(user=meeting.requester, message=f"Your meeting has been {new_status} by the invitee.")
+        
+        return JsonResponse({'status': 'success', 'message': 'Meeting status updated.'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+
+def request_meeting(request):
+    if request.method == 'POST':
+        requester = request.user
+        invitee_id = request.POST.get('invitee_id')
+        start_time = request.POST.get('start_time')
+        end_time = request.POST.get('end_time')
+
+        try:
+            start_time = timezone.make_aware(datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S'))
+            end_time = timezone.make_aware(datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S'))
+        except ValueError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid datetime format. Use YYYY-MM-DD HH:MM:SS'})
+
+        # ensure start time is in the future 
+        if start_time < timezone.now():
+            return JsonResponse({'status': 'error', 'message': 'Start time must be in the future.'})
+
+        # check if invitee exists 
+        try:
+            invitee = User.objects.get(id=invitee_id)
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Invitee does not exist.'})
+
+        if isTimeAvailable(invitee_id, start_time, end_time):
+            Event.objects.create(
+                requester=requester,
+                invitee=invitee,
+                start_time=start_time,
+                end_time=end_time
+            )
+            return JsonResponse({'status': 'success', 'message': 'Meeting request sent.'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'The requested time is not available.'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+        
+
+def block_time_slot(request):
+    if request.method == 'POST':
+        user = request.user
+        start_time_str = request.POST.get('start_time')
+        duration = request.POST.get('duration')
+
+        try:
+            # positive integer only
+            duration = int(duration)
+            if duration <= 0:
+                raise ValueError('Duration must be a positive number.')
+
+            start_time = timezone.make_aware(datetime.strptime(start_time_str, '%Y-%m-%d %H:%M:%S'))
+        except ValueError as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+        end_time = start_time + datetime.timedelta(minutes=duration)
+
+        if isTimeAvailable(user, start_time, end_time):
+            try:
+                UnavailableSlot.objects.create(user=user, start_time=start_time, end_time=end_time)
+                return JsonResponse({'status': 'success', 'message': 'Time slot blocked successfully.'})
+            except ValidationError as e:
+                return JsonResponse({'status': 'error', 'message': str(e)})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'The selected time slot overlaps with an existing blocked slot.'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})

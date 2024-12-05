@@ -76,7 +76,7 @@ My Calendar
       <div class = "day-num">
         {{ day }}
       </div>
-      {% for event in prev_month_events|find_events_date:day %}
+      {% for event in prev_month_events|find_ongoing_event:day %}
       <div class = "day-event-container">
         <div class="blue-event-bar">
 
@@ -102,7 +102,7 @@ My Calendar
         {{ day }}
       </div>
       <div class = "day-events-container">
-        {% for event in month_events|find_events_date:day %}
+        {% for event in month_events|find_ongoing_event:day %}
         <div class = "day-event-container">
           <div class="red-event-bar">
   
@@ -124,7 +124,8 @@ My Calendar
     <div class = "day-num">
       {{ day }}
     </div>
-    {% for event in month_events|find_events_date:day %}
+    {% for event in month_events|find_ongoing_event:day %}
+    {% if forloop.counter < 5 %}
       <div class = "day-event-container">
         <div class="red-event-bar">
 
@@ -133,6 +134,7 @@ My Calendar
           {{ event.title }}
         </div>
       </div>
+      {% endif %}
     {% endfor %}
     </div>  
     </a>
@@ -145,7 +147,8 @@ My Calendar
       <div class = "day-num">
         {{ day }}
       </div>
-      {% for event in month_events|find_events_date:day %}
+      {% for event in month_events|find_ongoing_event:day %}
+      {% if forloop.counter < 5 %}
       <div class = "day-event-container">
         <div class="red-event-bar">
 
@@ -154,6 +157,7 @@ My Calendar
           {{ event.title }}
         </div>
       </div>
+      {% endif %}
       {% endfor %}
     </div>  
     </a>
@@ -166,7 +170,8 @@ My Calendar
       <div class = "day-num">
         {{ day }}
       </div>
-      {% for event in month_events|find_events_date:day %}
+      {% for event in month_events|find_ongoing_event:day %}
+      {% if forloop.counter < 5 %}
       <div class = "day-event-container">
         <div class="red-event-bar">
   
@@ -175,7 +180,9 @@ My Calendar
           {{ event.title }}
         </div>
       </div>
+      {% endif %}
       {% endfor %}
+
     </div>
     </a>
   </div>

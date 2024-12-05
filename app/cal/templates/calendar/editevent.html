@@ -1,0 +1,43 @@
+{% extends "calendar/monthviewer.html" %}
+
+{% block title %}
+My Calendar
+{% endblock %}
+
+{% load static %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{% static 'calendar/monthview.css' %}">
+<link rel="stylesheet" href="{% static 'calendar/monthevent.css' %}">
+<link rel="stylesheet" href="{% static 'calendar/month-event-form.css' %}">
+
+{% endblock %}
+
+{% block monthviewer_content %}
+
+{% load mathfilters %}
+
+<div class="month-event-container">
+  <div class="outer-container">
+
+    <div class="event-form">
+
+      <form method="post">
+        {% csrf_token %}
+        {{ form }}
+  
+        <button type="submit">
+          Edit Event
+        </button>
+      </form>
+
+      
+    </div>
+    
+
+  </div>
+
+</div>
+
+{% endblock %}

@@ -10,7 +10,6 @@
 {% endblock %}
 
 {% block content %}
-
 <div class="overwrapping">
 <div class = "week-container">
   
@@ -65,7 +64,6 @@
 
 
   </div>
-
   <div class="over-wrapper">
 
     
@@ -132,8 +130,7 @@
         {% with events|find_ongoing_day_event:date as current_events %}
         {% calculate_offsets current_events date as newList %}
         {% for event in newList %}
-
-        {% url 'cal:weekeventcard' month_date=11 day_date=11 year_date=2024 event_id=event.id as weekeventcards %}
+        {% url 'cal:weekeventcard' month_date=start_month_value day_date=start_day_value year_date=start_year_value event_id=event.id as weekeventcards %}
         <a href="{{ weekeventcards }}">
         <div class="week-event-container week-event-{{ event.pos }}-{{ event.max }}" style="top: {{ event|calculate_top_value:date }}; bottom: {{ event|calculate_bottom_value:date }}">
 

@@ -15,6 +15,8 @@ urlpatterns = [
     path("week/<int:month_date>/<int:day_date>/<int:year_date>/event/<int:event_id>", views.eventweekcard, name="weekeventcard"),
     path("month/<int:month_date>/<int:day_date>/<int:year_date>/<int:selected_day>", views.monthevent, name="monthevent"),
     path("month/<int:month_date>/<int:day_date>/<int:year_date>/event/<int:event_id>", views.eventmonthcard, name="montheventcard"),
+    path("agenda", views.agendaview, name="agendaview"),
     path("month/<int:month_date>/<int:day_date>/<int:year_date>/<int:selected_day>/create", views.create_event_card, name="dayeventcreate"),
-    
+    path("month/<int:month_date>/<int:day_date>/<int:year_date>/event/<int:event_id>/edita/<int:selected_day>", views.modifyattendees, name="montheditattendees"),
+    path("month/<int:month_date>/<int:day_date>/<int:year_date>/event/<int:event_id>/edit/<int:selected_day>", views.editevent, name="montheventedit")
 ]
