@@ -10,6 +10,9 @@ from .utilities import save_user
 from django.utils import timezone
 from .forms import EventForm
 from django.http import JsonResponse
+from django.views.generic.edit import UpdateView
+from users.models import Profile
+from .models import Event
 from .date_get import getOffset, getNextOffset, get_week_range, getNextMonth, getNextMonthName, getNextOffsetDate, getPreviousMonth, getPreviousMonthName
 
 import datetime
@@ -758,14 +761,15 @@ def editevent(request, month_date, day_date, year_date, event_id, selected_day=i
 
   #Week Information
 
+  event = get_object_or_404(Event, pk=event_id)
   if request.method == "POST":
-        event = get_object_or_404(Event, pk=event_id)
-        form = EditEventForm(request.POST, instance=event)
-        if form.is_valid():
-            form.save()
-            return redirect(f'/cal/month/{month_date}/{day_date}/{year_date}/event/{event_id}')
+    form = EditEventForm(request.POST, instance=event)
+    if form.is_valid():
+        form.save()
+        return redirect(f'/cal/month/{month_date}/{day_date}/{year_date}/event/{event_id}')
   else:
-      form = EditEventForm()
+    print("Not Post")
+    form = EditEventForm(instance=event)
   
   #rendered_form = form.render("calendar/month_event_format.html")
 
@@ -870,14 +874,14 @@ def modifyattendees(request, month_date, day_date, year_date, event_id, selected
   selected_event = current_user_events.filter(pk=event_id)
   my_event = selected_event.first()
 
+  event = get_object_or_404(Event, pk=event_id)
   if request.method == "POST":
-        event = get_object_or_404(Event, pk=event_id)
-        form = AttendeeForm(request.POST, instance=event)
+        form = AttendeeForm(request.POST, instance=event, user=request.user)
         if form.is_valid():
             form.save()
             return redirect(f'/cal/month/{month_date}/{day_date}/{year_date}/event/{event_id}')
   else:
-      form = AttendeeForm()
+      form = AttendeeForm(instance=event, user=request.user)
   
   rendered_form = form.render("calendar/attendees_form.html")
 

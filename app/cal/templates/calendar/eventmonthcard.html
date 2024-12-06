@@ -34,7 +34,7 @@ My Calendar
       </div>
       <div class="outer-info">
         {{ start_date }}
-      </div>
+        </div>
 
       {% url 'cal:montheventedit' month_date=start_month_value day_date=start_day_value year_date=start_year_value event_id=selected_event.id selected_day=selected_day as editevent %}
       <a href="{{ editevent }}">

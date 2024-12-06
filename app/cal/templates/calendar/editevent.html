@@ -21,13 +21,33 @@ My Calendar
 <div class="month-event-container">
   <div class="outer-container">
 
-    <div class="event-form">
+
+    <div class="outer-info-container">
+    </div>
+    <div class="inner-container">
+    <div class="event-form-edit">
 
       <form method="post">
         {% csrf_token %}
-        {{ form }}
+        {% for field in form %}
+          <div class="">  
+            <div class="">
+              <div class="">
+                {{ field.label_tag }}
+              </div>
+                {{ field }}
+            </div>
+            <div class="">
+              {{ field.errors }}
+            </div>
+
+          </div>
+          <div class="">
+
+          </div>
+        {% endfor %}
   
-        <button type="submit">
+        <button type="submit" class="edit-button">
           Edit Event
         </button>
       </form>
@@ -35,7 +55,7 @@ My Calendar
       
     </div>
     
-
+    </div>
   </div>
 
 </div>
