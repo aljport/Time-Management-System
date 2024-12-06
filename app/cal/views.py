@@ -84,24 +84,56 @@ def weekview(request, month_date=int(datetime.datetime.now().strftime('%m')),
   prev_week_month = prev_week_end.strftime('%m')
   prev_week_year = prev_week_end.strftime('%Y')
 
+  start_month_date = month_date
+  start_year_date =  year_date
+  current_month_days = calendar.monthrange(start_year_date, start_month_date)[1]
+  minicalDays = list(range(1, current_month_days + 1))
+  start_day_date = day_date
+  start_date = datetime.date(start_year_date, start_month_date, start_day_date)
+  first_day_of_month = start_date.replace(day=1)
+  weekday_name = first_day_of_month.strftime('%A')
+  
+  start_day_date = day_date
+  start_month_date = month_date
+  start_year_date =  year_date
+  start_date = datetime.date(start_year_date, start_month_date, start_day_date)
+  last_day = start_date.replace(day=current_month_days)
+  next_offset = getNextOffsetDate(last_day.strftime('%A'))
+  next_offset_nums = list(range(1, next_offset + 1 ))
+
+  prev_month = getPreviousMonth(start_date)
+  prev_date = calendar.monthrange(prev_month.year, prev_month.month)[1]
+
+  offset = getOffset(weekday_name)
+  offset_nums = list(range(prev_date - int(offset) + 1, prev_date + 1))
+
   context = {
+    "start_month_date" : start_month_date,
+    "start_day_date" : start_day_date,
+    "start_year_date" : start_year_date,
     "current_month_value" : current_month_value,
+    "current_days" : current_month_days,
     "current_day_value" : current_day_value,
     "current_year_value" : current_year_value,
+    "days_list" : minicalDays,
     "day_names" : day_names,
     "day_nums" : days,
+    "day_offset" : offset,
     "hours" : hour_num,
     "today_date" : timezone.now().day,
+    "date" : timezone.now().day,
     "today_name"  : current_day_name,
     "first" : first_date,
     "current_month" : current_month_name,
+    "next_offset_nums" : next_offset_nums,
     "next_week_day" : next_week_day,
     "next_week_month" : next_week_month,
     "next_week_year" : next_week_year,
+    "offset_numbers" : offset_nums,
+    "prev_date" : prev_week_end.strftime('%d'),
     "prev_week_day" : prev_week_date,
     "prev_week_month" : prev_week_month,
     "prev_week_year" : prev_week_year,
-    "prev_date" : prev_week_end.strftime('%d'),
     "start_month_value" : start_month_value,
     "start_day_value" : start_day_value,
     "start_year_value" : start_year_value,

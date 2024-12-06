@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="{% static 'calendar/style.css' %}">
     <link rel="stylesheet" href="{% static 'calendar/sidebar.css' %}">
     <link rel="stylesheet" href="{% static 'calendar/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'calendar/minicalendar.css' %}">
+    <link rel="stylesheet" href="{% static 'calendar/monthview.css' %}">
 
     <!-- Allow templates to inject their own types -->
     {% block head %}
@@ -20,7 +22,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
-
 
   </head>
 
@@ -46,21 +47,77 @@
                 2024
               </div>
             </div>
-            <div class="arrow-mini">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 25 25" fill="none">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.3677 6.75173C15.5926 6.97677 15.719 7.28194 15.719 7.60013C15.719 7.91833 15.5926 8.2235 15.3677 8.44853L11.4161 12.4001L15.3677 16.3517C15.5863 16.5781 15.7072 16.8812 15.7045 17.1958C15.7017 17.5105 15.5755 17.8114 15.3531 18.0339C15.1306 18.2564 14.8296 18.3826 14.515 18.3853C14.2003 18.3881 13.8972 18.2671 13.6709 18.0485L8.87088 13.2485C8.64591 13.0235 8.51953 12.7183 8.51953 12.4001C8.51953 12.0819 8.64591 11.7768 8.87088 11.5517L13.6709 6.75173C13.8959 6.52677 14.2011 6.40039 14.5193 6.40039C14.8375 6.40039 15.1426 6.52677 15.3677 6.75173Z" fill="white"/>
-              </svg>
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 25 25" fill="none">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.87088 18.0482C8.64591 17.8232 8.51953 17.518 8.51953 17.1998C8.51953 16.8816 8.64591 16.5764 8.87088 16.3514L12.8225 12.3998L8.87088 8.4482C8.65229 8.22188 8.53133 7.91876 8.53407 7.60412C8.5368 7.28949 8.663 6.98851 8.88549 6.76602C9.10798 6.54353 9.40896 6.41733 9.72359 6.4146C10.0382 6.41186 10.3414 6.53282 10.5677 6.75141L15.3677 11.5514C15.5926 11.7764 15.719 12.0816 15.719 12.3998C15.719 12.718 15.5926 13.0232 15.3677 13.2482L10.5677 18.0482C10.3426 18.2732 10.0375 18.3995 9.71927 18.3995C9.40108 18.3995 9.09591 18.2732 8.87088 18.0482Z" fill="white"/>
-              </svg>
+          </div>
+          <div class = "daysRow">
+            <div class = "dayBox">
+              <div> SUN </div>
+              <div> MON </div>
+              <div> TUE </div>
+              <div> WED </div>
+              <div> THU </div>
+              <div> FRI </div>
+              <div> SAT </div>
+            </div> 
+          </div>
+          <div class = "grid-container">
+            <div class = "grid">
+              {% for day in offset_numbers %}
+                {% if forloop.counter|mod:7 == 1 %}
+                  <div class="minicalCol"> 
+                      <div class = "day-numMini" style="color: #71717A;">
+                        {{ day }}
+                      </div>
+                  </div>
+                {% else %}
+                  <div class="minicalCol"> 
+                    <div class = "day-numMini" style="color: #71717A;">
+                      {{ day }}
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}  
+              {% for day in days_list %}  
+              {% with forloop.counter|add:day_offset as counter_with_offset %}
+                {% if day == date %}
+                  <div class="minicalCol">
+                    <div class = "circle">
+                      {{ day }}
+                    </div>
+                  </div>  
+                {% else %}
+                  <div class="minicalCol">
+                    <div class = "day-numMini">
+                      {{ day }}
+                    </div>
+                  </div>  
+                {% endif %}
+              {% endwith %} 
+              {% endfor %}  
+
+              {% for day in next_offset_nums %}
+              {% with forloop.counter|add:day_offset as counter_with_offset %}
+              {% with counter_with_offset|add:current_days as next_counter_offset %}
+              {% if next_counter_offset|divisibleby:7 %}
+                <div class="minicalCol"> 
+                  <div class = "day-numMini" style="color: #71717A;">
+                    {{ day }} 
+                  </div>
+                    <div class = "circ1"></div>
+                    <div class = "circ2"></div>
+                    <div class = "circ3"></div>
+                </div>
+              {% else %}
+                <div class="minicalCol"> 
+                  <div class = "day-numMini" style="color: #71717A;">
+                    {{ day }} 
+                  </div>
+                </div>
+              {% endif %}
+              {% endwith %}
+              {% endwith %}
+              {% endfor %}
             </div>
           </div>
-
-          <div class="">
-
-
-          </div>
-
         </div>
 
         </div>

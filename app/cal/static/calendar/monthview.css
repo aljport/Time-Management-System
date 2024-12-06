@@ -1,15 +1,12 @@
-.calendar-container
-{
+.calendar-container {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 93.5vh;
 }
 
-.calendar-grid-container
-{
+.calendar-grid-container {
   display: grid;
-  
   grid-template-columns: repeat(7, 1fr);
   padding-left: 0.5625vw;
   padding-right: 0.5625vw;
@@ -80,6 +77,14 @@
   padding-bottom: 0.25vw;
 }
 
+.day-numMini{
+  text-align: right;
+  padding-top: 1vw;
+  padding-bottom: 1vw;
+  padding-right: 1vw;
+  font-size: 1.1vh;
+  color: white;
+}
 .month-container{
   display: flex;
   height: 88.5vh;
