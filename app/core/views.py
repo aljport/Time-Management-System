@@ -5,6 +5,7 @@ Api Views for core app functionalities.
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
+from django.shortcuts import redirect
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
 from rest_framework.views import exception_handler
@@ -15,6 +16,9 @@ from rest_framework.views import exception_handler
 
 def index(request):
     """Base view for site."""
+
+    redirect(f"/users")
+
     server_time = timezone.now().strftime("%d/%m/%Y, %H:%M:%S")
     events = []
     return render(request, "core/landing.html", context={"time": server_time, "events": events})
