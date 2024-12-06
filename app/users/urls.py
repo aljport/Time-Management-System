@@ -4,6 +4,7 @@ from . import views
 
 app_name = "users"
 
+# Added urls for all the user related pages
 urlpatterns = [
     path("", views.index, name="user_landing"),
     path('login/', views.login_page, name = 'login_page'),
