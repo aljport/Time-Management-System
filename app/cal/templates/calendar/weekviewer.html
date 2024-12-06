@@ -24,7 +24,7 @@
 
       <div class="calendar-grid-week-container">
         {% for day_name in day_names %}
-        <div>
+        <div class="week-name-day">
           {{ day_name }}
         </div>
         {% endfor %}   
@@ -32,9 +32,15 @@
     
       <div class="calendar-grid-week-container">
         {% for date in day_nums %}
-        <div>
+        {% if date == current_day_value and today_is_true %}
+        <div class="current-day week-date">
           {{ date }}
         </div>
+        {% else %}
+        <div class="week-date">
+          {{ date }}
+        </div>
+        {% endif %}
         {% endfor %}   
       </div>
     
@@ -42,14 +48,26 @@
         
         <div class="grid">
           {% for date in day_nums %}
-            <div class="weekday">
+
+            {% if date == current_day_value and today_is_true %}
+            <div class="weekday current-day">
               {% for event in events|find_ongoing_long_event:date %}
-                <div class="long-event-container  ">
+              
+                <div class="long-event-container">
     
                 </div>
               {% endfor %}
             </div>
-            
+            {% else %}
+            <div class="weekday">
+              {% for event in events|find_ongoing_long_event:date %}
+              
+                <div class="long-event-container">
+    
+                </div>
+              {% endfor %}
+            </div>
+            {% endif %}
           {% for event in events|find_ongoing_long_event:date %}
           <div class="long-event" id="{{event.title}}" style="left: {{ event|calculate_long_left_value:start_of_week }}; right: {{ event|calculate_long_right_value:end_of_week }}">
             {{ event }} {{event.start_time.day }} {{ event.end_time.day }}
@@ -64,12 +82,7 @@
 
 
   </div>
-  <div class="over-wrapper">
-
-    
-      
-  
-  
+  <div class="over-wrapper">  
       <div class="week-grid-container">
         <div class="hidden-hour-week-day-container">
           {% for hour in hours %}
@@ -118,13 +131,22 @@
         </div>
   
       {% for date in day_nums %}
-    
+      
+      
+
+      
       <div class="week-columns">
         <div class="week-columns-container">
         {% for hour in hours %}
+        {% if date == current_day_value and today_is_true %}
+        <div class="calendar-week-block current-day">
+        </div>
+
+        {% else %}
         <div class="calendar-week-block">
         </div>
-  
+
+        {% endif %}
         {% endfor %}
   
         {% with events|find_ongoing_day_event:date as current_events %}

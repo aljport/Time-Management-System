@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{% static 'calendar/style.css' %}">
     <link rel="stylesheet" href="{% static 'calendar/sidebar.css' %}">
     <link rel="stylesheet" href="{% static 'calendar/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'calendar/minical.css' %}">
 
     <!-- Allow templates to inject their own types -->
     {% block head %}
@@ -56,9 +57,125 @@
             </div>
           </div>
 
-          <div class="">
+          <div class="mini-cal-container">
+            <div class = "daysRow">
+                <div class="day"> SUN </div>
+                <div class="day"> MON </div>
+                <div class="day"> TUE </div>
+                <div class="day"> WED </div>
+                <div class="day"> THU </div>
+                <div class="day"> FRI </div>
+                <div class="day"> SAT </div>
+            </div>
 
+            <div class = "grid-container">
+              <div class = "grid">
+                {% for day in offset_numbers %}
+                    <div class="minicalCol"> 
+                      <div class = "day-numMini" style="color: #71717A;">
+                        {{ day }}
+                      </div>
+                    </div>
+                {% endfor %}  
+                {% for day in month_days_list %}  
+                {% with forloop.counter|add:day_offset as counter_with_offset %}
+                  {% if day == date %}
+                    <div class="minicalCol">
+                      <div class = "day-numMini">
+                        {{ day }}
+                      </div>
+                      <div class = "mini-events-container">
 
+                        {% for event in month_events|find_ongoing_event:day %}
+                        {% if forloop.counter < 4 %}
+                        <div class="event-container">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 5 5" fill="none" class="color-{{ forloop.counter }}">
+                            <circle cx="2.14282" cy="2.625" r="2" fill=""/>
+                          </svg>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    
+                    </div>  
+                  {% else %}
+                    <div class="minicalCol">
+                      <div class = "day-numMini">
+                        {{ day }}
+                      </div>
+                      <div class = "mini-events-container">
+
+                        {% for event in month_events|find_ongoing_event:day %}
+                        {% if forloop.counter < 4 %}
+                        <div class="event-container">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 5 5" fill="none" class="color-{{ forloop.counter }}">
+                            <circle cx="2.14282" cy="2.625" r="2" fill=""/>
+                          </svg>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>  
+                  {% endif %}
+                {% endwith %} 
+                {% endfor %}  
+  
+                {% for day in next_offset_nums %}
+                {% with forloop.counter|add:day_offset as counter_with_offset %}
+                {% with counter_with_offset|add:current_days as next_counter_offset %}
+                {% if next_counter_offset|divisibleby:7 %}
+                  <div class="minicalCol"> 
+                    <div class = "day-numMini" style="color: #71717A;">
+                      {{ day }} 
+                    </div>
+                    <div class = "mini-events-container">
+
+                      {% for event in month_events|find_ongoing_event:day %}
+                      {% if forloop.counter < 4 %}
+                      <div class="event-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 5 5" fill="none" class="color-{forloop.counter}">
+                          <circle cx="2.14282" cy="2.625" r="2" fill=""/>
+                        </svg>
+                      </div>
+                      {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% else %}
+                  <div class="minicalCol"> 
+                    <div class = "day-numMini" style="color: #71717A;">
+                      {{ day }} 
+                    </div>
+                  </div>
+                {% endif %}
+                {% endwith %}
+                {% endwith %}
+                {% endfor %}
+              </div>
+            </div>  
+            <div class="schedule-container">
+              <div class="header">
+                <div>
+                  Schedule Event
+                </div>
+                {% url 'cal:montheventcreate' as createevent %}
+                <a href="{{ createevent }}">
+                <div class="add-event">
+                  +
+                </div>
+                </a>
+              </div>
+
+              <div class="white-line">
+                
+              </div>
+
+              <div>
+                {% block eventblocks %}
+                {% endblock %}
+              </div>
+
+            </div>  
           </div>
 
         </div>
@@ -133,15 +250,15 @@
 
               {% url 'cal:monthview' as month_view %}
               {% if month_view == request.path_info %}
-                <a href="{{ current_month_viewer }}" id = "selected">
+                <a href="{{ month_view }}" id = "selected">
                   Month
                 </a>
               {% elif "month" in request.path_info %}
-                <a href="{{ current_month_viewer }}" id = "selected">
+                <a href="{{ month_view }}" id = "selected">
                   Month
                 </a>
               {% else %}
-                <a href="{{ current_month_viewer }}" id = "unselected">
+                <a href="{{ month_view }}" id = "unselected">
                   Month
                 </a>
               {% endif %}
@@ -169,13 +286,15 @@
                   
               </div>
 
+              {% url 'users:account_information_page' as user_info %}
+              <a href="{{ user_info }}">
               <div class="member">
                 <svg width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="13.8213" cy="13.8216" r="13.1786" fill="#C5CCD3"/>
                   </svg>
                   
               </div>
-
+              </a>
             </div>
           </div>
         </div>

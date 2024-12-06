@@ -21,7 +21,7 @@ Login
     Login
   </div>
   <div class="form-container">
-    <form class="" method="post" enctype="multipart/form-data">
+    <form class="form-css" method="post" enctype="multipart/form-data">
     
       {% csrf_token %}
       
@@ -31,7 +31,9 @@ Login
           {% endfor %}
       </div>
   
-      <div class="">
+      <div class="information-container">
+
+        <div class="information-box">
           <label for="username">
               Username:
           </label>
@@ -39,19 +41,20 @@ Login
   
       </div>
   
-      <div class="">
+      <div class="information-box">
           <label for="password">
               Password:
           </label>
           <input type="text" class="form-control" name="password" id="password" placeholder="Enter password" required>
           
       </div>
+      </div>
       
       <div>Forgot your Password: <a href="{% url 'users:username_get_page' %}"> Reset Here </a></div>
   
       <div>Register Now: <a href= "{% url 'users:register_page' %}"> Register </a></div>
   
-      <button type="submit" class="btn btn-primary"> Submit </button>
+      <button type="submit" class="good-button"> Submit </button>
   </form>
   </div>
 </div>

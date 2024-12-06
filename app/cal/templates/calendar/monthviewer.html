@@ -9,7 +9,7 @@ My Calendar
 {% block head %}
 
 <link rel="stylesheet" href="{% static 'calendar/monthview.css' %}">
-
+<link rel="stylesheet" href="{% static 'calendar/todoevent.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -103,6 +103,7 @@ My Calendar
       </div>
       <div class = "day-events-container">
         {% for event in month_events|find_ongoing_event:day %}
+        {% if forloop.counter < 4 %}
         <div class = "day-event-container">
           <div class="red-event-bar">
   
@@ -111,7 +112,17 @@ My Calendar
             {{ event.title }}
           </div>
         </div>
+        {% endif %}
         {% endfor %}
+        <div class="excess-month-view">  
+          {% for event in month_events|find_ongoing_event:day %}
+          {% if forloop.counter > 3  and forloop.counter < 7 %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="month-event-icon">
+              <circle cx="10" cy="10" r="10" fill=""/>
+              </svg>
+          {% endif %}
+          {% endfor %}
+          </div>
       </div>
     </div>  
     </a>
@@ -125,7 +136,7 @@ My Calendar
       {{ day }}
     </div>
     {% for event in month_events|find_ongoing_event:day %}
-    {% if forloop.counter < 5 %}
+    {% if forloop.counter < 4 %}
       <div class = "day-event-container">
         <div class="red-event-bar">
 
@@ -134,8 +145,18 @@ My Calendar
           {{ event.title }}
         </div>
       </div>
-      {% endif %}
+    {% endif %}
     {% endfor %}
+    
+    <div class="excess-month-view">  
+    {% for event in month_events|find_ongoing_event:day %}
+    {% if forloop.counter > 3  and forloop.counter < 7 %}
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="month-event-icon">
+        <circle cx="10" cy="10" r="10" fill=""/>
+        </svg>
+    {% endif %}
+    {% endfor %}
+    </div>
     </div>  
     </a>
   </div>
@@ -148,7 +169,7 @@ My Calendar
         {{ day }}
       </div>
       {% for event in month_events|find_ongoing_event:day %}
-      {% if forloop.counter < 5 %}
+      {% if forloop.counter < 4 %}
       <div class = "day-event-container">
         <div class="red-event-bar">
 
@@ -159,6 +180,15 @@ My Calendar
       </div>
       {% endif %}
       {% endfor %}
+      <div class="excess-month-view">  
+        {% for event in month_events|find_ongoing_event:day %}
+        {% if forloop.counter > 3  and forloop.counter < 7 %}
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="month-event-icon">
+            <circle cx="10" cy="10" r="10" fill=""/>
+            </svg>
+        {% endif %}
+        {% endfor %}
+      </div>
     </div>  
     </a>
     </div>
@@ -171,7 +201,7 @@ My Calendar
         {{ day }}
       </div>
       {% for event in month_events|find_ongoing_event:day %}
-      {% if forloop.counter < 5 %}
+      {% if forloop.counter < 4 %}
       <div class = "day-event-container">
         <div class="red-event-bar">
   
@@ -182,7 +212,15 @@ My Calendar
       </div>
       {% endif %}
       {% endfor %}
-
+      <div class="excess-month-view">  
+        {% for event in month_events|find_ongoing_event:day %}
+        {% if forloop.counter > 3  and forloop.counter < 7 %}
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="month-event-icon">
+            <circle cx="10" cy="10" r="10" fill=""/>
+            </svg>
+        {% endif %}
+        {% endfor %}
+      </div>
     </div>
     </a>
   </div>
@@ -248,3 +286,24 @@ My Calendar
 
 
 {% endblock %}
+
+
+{% block eventblocks %}
+{% load mathfilters %}
+{% load calendar_filters %}
+
+<div class="todo-event-container">
+  {% for event in todo_events %}
+  <div class="event-containers">
+    <div>
+      {{ event.start_time|time:'h:i A' }} - {{ event.end_time|time:'h:i A' }}
+    </div>
+    <div class="title">
+      {{ event.title }}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}Schedule Event
++

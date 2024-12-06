@@ -24,7 +24,7 @@ html, body {
 
 .body-title{
   font-size: 5vw;
-  color: rgb(255, 146, 146);
+  color: rgb(109, 200, 253);
   text-align: center;
   height: 10vh;
 }
@@ -42,21 +42,21 @@ html, body {
 }
 
 .shade-12{
-  background-color: rgba(255, 102, 102, 0.12);
+  background-color: rgba(144, 214, 255, 0.12);
 }
 
 
 .shade-25{
-  background-color: rgba(255, 102, 102, 0.25);
+  background-color: rgba(144, 214, 255, 0.25);
 }
 
 .shade-50{
 
-  background-color: rgba(255, 102, 102, 0.5);
+  background-color: rgba(144, 214, 255, 0.5);
 }
 
 .shade-75{
-  background-color: rgba(255, 102, 102, 0.75);
+  background-color: rgba(144, 214, 255, 0.75);
 }
 
 .links-container{
@@ -64,3 +64,81 @@ html, body {
   text-align: center;
 }
 
+.lightRectangle {
+  width: 290px;
+  height: 100vh;
+  background-color: #FFFFFF;
+  opacity: 50%;
+  position: fixed;
+  right: 344px;
+  z-index: 1;
+}
+.darkRectangle {
+  width: 634px;
+  height: 100vh;
+  background-color: rgb(144, 214, 255);
+  opacity: 50%;
+  position: fixed;
+  right: 0;
+  z-index: 0;
+}
+.login {
+  font-size: 2.5em;
+  font-weight: 500;
+  color: #0e0e55;
+  text-shadow: 1px 1px 2px pink;
+  margin-left: 40px;
+  margin-top: 30px;
+  letter-spacing: 2px;
+}
+label {
+  display: block; /* Makes label occupy full width */
+  margin-bottom: 5px; /* Space between label and input */
+  font-weight: 500; /* Normal weight */
+  color: #0e0e55; /* Custom color for the label */
+  font-size: 1.9em; /* Increase font size */
+  margin-left: 40px;
+  letter-spacing: 1px;
+}
+input {
+  margin-top: 5px; /* Space between label and input */
+  margin-bottom: 40px;
+  margin-left: 40px;
+  font-size: 1em;
+  font-weight: 500; /* Normal weight */
+  color: #0e0e55; /* Custom color for the label */
+  border: none; /* Remove border */
+  border-bottom: 2px solid #007bff; /* Add a bottom border */
+  border-color:#B5C7EB;
+  width: 250px;
+  opacity: 50%;
+  background-color: transparent; /* Make background transparent */
+  padding: 5px 0; /* Vertical padding for spacing */
+}
+.good-button {
+  margin-left: 40px;
+  margin-top: 10px;
+  font-size: 1em;
+  font-weight: 500; /* Normal weight */
+  color: #0e0e55;
+  background-color: #B5C7EB; /* Custom color for the label */
+  opacity: 50%;
+  padding: 15px 30px;
+  width: 150px;
+  border: 2px solid #B5C7EB;
+  border-radius: 5px;
+}
+
+.good-button:hover{
+  transition: 0.4s;
+  margin-left: 40px;
+  margin-top: 10px;
+  font-size: 1em;
+  font-weight: 500; /* Normal weight */
+  color: #0e0e55;
+  border: 2px solid #B5C7EB;
+  background-color: #ffffff; /* Custom color for the label */
+  opacity: 50%;
+  padding: 15px 30px;
+  width: 150px;
+}

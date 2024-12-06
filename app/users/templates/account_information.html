@@ -1,0 +1,73 @@
+{% extends "calendar/base.html" %}
+
+{% block title %}
+My Calendar
+{% endblock %}
+
+{% load static %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{% static 'calendar/monthview.css' %}">
+<link rel="stylesheet" href="{% static 'accountinfo.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% load mathfilters %}
+
+<div class="account-container">
+
+
+    <div class="account-info-container">
+        <div class="basic-info-container">
+        <div class="basic-info">
+            <div class="info-section">
+                Username: {{ current_user.username }}
+            </div>
+            <div class="info-section">
+                Name: {{ current_user.first_name }} {{ current_user.last_name }}
+            </div>
+            <div class="info-section">
+                Email: {{ current_user.email }}
+            </div>
+        </div>
+        </div>
+        <div class="friend-list-container">
+            <div class="friend-header">
+                Friend List
+            </div>
+            <div>
+                {% block friendlist %}
+                {% endblock %}
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="log-out-here">
+        <form class="col-6 mx-auto card p-3 shadow-lg" method="post" enctype="multipart/form-data">
+
+            {% csrf_token %}
+    
+            <p><a href="/cal/month"> Return to your Calendar </a></p>
+    
+            {% if name %}
+            <div> 
+                Log out of your account?
+            </div>
+            <button type="submit" class="logging-out"> 
+                Log Out 
+            </button>
+    
+            {% else %}
+    
+            <h1> User is not logged in</h1>
+    
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
