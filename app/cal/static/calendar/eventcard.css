@@ -1,0 +1,141 @@
+
+
+.header{
+
+  margin-left:20px;
+  margin-top:25px;
+  margin-right:25px;
+}
+
+.header .title{
+
+  font-size: 1.9vw;
+  font-style: normal;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.header .location{
+  color: rgb(110, 41, 41);
+  font-size: 1.4vw;
+  font-style: normal;
+  font-weight: 400;
+  margin-top: 20px;
+}
+
+.line{
+  width: 90%;
+  height: 2px;
+  background-color: #ffffff;
+  margin-left: 5%;
+  flex-shrink: 0;
+  margin-top:20px;
+  margin-bottom: 20px;
+}
+
+.inner-info .breaker{
+  fill: #D9D9D9;
+  stroke-width: 2px;
+  stroke: #FFF;
+  width: 100%;
+  height: 2px;
+  flex-shrink: 0;
+  margin-left: 5%;
+}
+
+.body{
+  margin-top:30px;
+  margin-left:20px;
+
+}
+
+.body .start_time{
+  font-size: 1.3vw;
+  font-style: normal;
+  font-weight: 600;
+  margin-bottom:0.5vh;
+}
+
+.body .end_time{
+  margin-top:0.5vh;
+  font-size: 1.3vw;
+  font-style: normal;
+  font-weight: 600;
+}
+
+.description{
+  font-size: 1.1vw;
+  font-style: normal;
+  font-weight: 400; 
+  margin-top:20px;
+  margin-left:20px;
+  height:25%;
+  text-overflow: hidden;
+  overflow-y: scroll;
+  margin-right:30px;
+  overflow-x: hidden;
+}
+
+.description::-webkit-scrollbar{
+  width: 0.5vw;
+  margin-right: 0.5625vw;
+}
+
+.description::-webkit-scrollbar-track {
+
+}
+
+.description::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border-radius: 10px;
+  margin-right: 0.5625vw;
+}
+
+.description::-webkit-scrollbar-thumb:hover {
+  background: #888;
+  margin-right: 0.5625vw;
+}
+
+
+.attendees{
+  margin-left:20px;
+  margin-right:20px;
+
+}
+
+.attendees .controls{
+  display: flex;
+  justify-content: space-between;
+}
+
+.attendees .attending-list{
+  margin-top: 1vh;
+  font-size: 1.2vw;
+  font-style: normal;
+  font-weight: 700;
+  min-height: none;
+  height: 100%;
+  max-height: 17vh;
+  overflow-y: scroll;
+}
+
+
+.attending-list::-webkit-scrollbar{
+  width: 0.5vw;
+  margin-right: 0.5625vw;
+}
+
+.attending-list::-webkit-scrollbar-track {
+
+}
+
+.attending-list::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border-radius: 10px;
+  margin-right: 0.5625vw;
+}
+
+.attending-list::-webkit-scrollbar-thumb:hover {
+  background: #888;
+  margin-right: 0.5625vw;
+}

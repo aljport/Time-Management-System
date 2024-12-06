@@ -6,111 +6,172 @@
 
 <link rel="stylesheet" href="{% static 'calendar/weekview.css' %}">
 
+
 {% endblock %}
 
-
 {% block content %}
-
+<div class="overwrapping">
 <div class = "week-container">
-  <div class="week-hour-container">
-    <!---
-    <div class="day-name-empty"></div>
-    {% for hour in hours %}
-    <div class="week-hour-display">
-      {{ hour }}:00
+  
+  <div class="top-week-container">
+    <div class="gap-container">
+
+
+      
     </div>
-    {% endfor %}
-    -->
-  </div>
-  <div class="week-grid-container">
-    <div class="calendar-grid-container">
-      {% for name in day_names %}
-      {% if name == today_name %}
-      <div class="week-name week-day-container current-day">
-        {{ name }}
-      </div>
-      {% elif forloop.counter|mod:7 == 1 %}
-        <div class="week-name week-day-container weekend">
-          {{ name }}
+    <div class="top-week-container-content">
+
+
+      <div class="calendar-grid-week-container">
+        {% for day_name in day_names %}
+        <div>
+          {{ day_name }}
         </div>
-      {% elif forloop.counter|mod:7 == 0 %}
-      <div class="week-name week-day-container weekend">
-        {{ name }}
+        {% endfor %}   
       </div>
-      {% else %}
-      <div class="week-name week-day-container">
-        {{ name }}
+    
+      <div class="calendar-grid-week-container">
+        {% for date in day_nums %}
+        <div>
+          {{ date }}
+        </div>
+        {% endfor %}   
       </div>
-      {% endif %}
-      {% endfor %}
-    </div>
-
-    <div class="calendar-grid-container">
-      {% for date in day_nums %}
-      {% if date == today_date %}
-      <div class="day-name day-name-container current-day">
-        {{ date }}
-      </div>
-      {% elif forloop.counter|mod:7 == 1 %}
-      <div class="day-name day-name-container weekend">
-        {{ date }}
-      </div>
-      {% elif forloop.counter|mod:7 == 0 %}
-      <div class="day-name day-name-container weekend">
-        {{ date }}
-      </div>
-      {% else %}
-      <div class="day-name day-name-container">
-        {{ date }}
-      </div>
-      {% endif %}
-      {% endfor %}
-    </div>
-    <div class="big-container">
-    <div class="week-hour-container">
-      
-      <div class="day-name-empty"></div>
-      {% for hour in hours %}
-      <div class="week-hour-display">
-        {{ hour }}:00
-      </div>
-      {% endfor %}
-      
-    </div>
-      <div class="calendar-grid-number-container">
-      <div class = "calendar-grid-container">
-        {% for hour in hours %}
-          {% for day_num in day_nums %}
-          {% if day_num == today_date %}
-          <div class="week-day current-day">
-
-          </div>
-          {% elif forloop.counter|divisibleby:7%}
-          <div class="week-day weekend">
+    
+      <div class="long-week-event-container">
+        
+        <div class="grid">
+          {% for date in day_nums %}
+            <div class="weekday">
+              {% for event in events|find_ongoing_long_event:date %}
+                <div class="long-event-container  ">
+    
+                </div>
+              {% endfor %}
+            </div>
             
+          {% for event in events|find_ongoing_long_event:date %}
+          <div class="long-event" id="{{event.title}}" style="left: {{ event|calculate_long_left_value:start_of_week }}; right: {{ event|calculate_long_right_value:end_of_week }}">
+            {{ event }} {{event.start_time.day }} {{ event.end_time.day }}
           </div>
-          {% elif forloop.counter|mod:7 == 1 %}
-          <div class="week-day weekend">
-
-          </div>
-          {% else %}
-          <div class="week-day">
-
-          </div>
-          {% endif %}
+    
           {% endfor %}
-        {% if forloop.counter|divisibleby:7 == 0 and not forloop.last %}
-          </div><div class = "calendar-grid-container">
-        {% endif %}
+          
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  <div class="over-wrapper">
+
+    
+      
+  
+  
+      <div class="week-grid-container">
+        <div class="hidden-hour-week-day-container">
+          {% for hour in hours %}
+
+            <div class="hidden-hour-week-day">
+              
+            </div>
+
+          {% endfor %}
+        </div>
+        <div class = "wrapper-hours-week">
+          <div class="day-times">
+    
+          {% for hour in hours %}
+            <div class="hour-block">
+              
+              {% if forloop.counter0 == 0 %}
+              <div class="hour-time">
+
+              </div>
+
+              {% elif forloop.counter0 > 12 %}
+              <div class="hour-time">
+                {{ forloop.counter0|add:"-12" }} PM
+              </div>
+
+              {% elif forloop.counter0 == 12 %}
+              <div class="hour-time">
+                {{ hour }} PM
+              </div>
+
+              {% else %}
+              <div class="hour-time">
+                {{ hour }} AM
+              </div>
+              
+              {% endif %}
+              
+            </div>
+            {% endfor %}
+        
+          </div>
+          
+          
+          
+        </div>
+  
+      {% for date in day_nums %}
+    
+      <div class="week-columns">
+        <div class="week-columns-container">
+        {% for hour in hours %}
+        <div class="calendar-week-block">
+        </div>
+  
+        {% endfor %}
+  
+        {% with events|find_ongoing_day_event:date as current_events %}
+        {% calculate_offsets current_events date as newList %}
+        {% for event in newList %}
+        {% url 'cal:weekeventcard' month_date=start_month_value day_date=start_day_value year_date=start_year_value event_id=event.id as weekeventcards %}
+        <a href="{{ weekeventcards }}">
+        <div class="week-event-container week-event-{{ event.pos }}-{{ event.max }}" style="top: {{ event|calculate_top_value:date }}; bottom: {{ event|calculate_bottom_value:date }}">
+
+        <div class="red-event">
+          <div class="red-main-event-bar">
+            .
+          </div>
+          <div class="event-info">
+            <div class="time">
+              {{ event.start_time|time:'h:i A' }}
+            </div>
+            <div class="title">
+              {{ event.title }}
+            </div>
+          </div>
+        </div>
+        </div>
+        </a> 
 
         {% endfor %}
       </div>
-
+        
+        {% endwith %}
+        
       </div>
+      
+      {% endfor %}
+  
+  
+      </div>
+
     </div>
-    </div>
-  </div>
+
 
   
+
 </div>
+
+{% block weekevent_id %}
+{% endblock %}
+
+</div>
+
 {% endblock %}

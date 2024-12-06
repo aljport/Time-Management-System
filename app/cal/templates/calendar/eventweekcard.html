@@ -1,0 +1,117 @@
+{% extends "calendar/weekviewer.html" %}
+
+{% block title %}
+My Event
+{% endblock %}
+
+{% load static %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{% static 'calendar/weekviewer.css' %}">
+<link rel="stylesheet" href="{% static 'calendar/weekview.css' %}">
+<link rel="stylesheet" href="{% static 'calendar/monthevent.css' %}"> 
+<link rel="stylesheet" href="{% static 'calendar/eventcard.css' %}">
+{% endblock %}
+
+{% block weekevent_id %}
+
+{% load mathfilters %}
+
+<div class="event-wrapper">
+<div class="month-event-container">
+  
+  <div class="outer-container">
+    <div class="outer-info-container">
+      {% url 'cal:weekviewer' month_date=start_month_value day_date=start_day_value year_date=start_year_value as week_viewer %}
+      <div class="exit-container">
+        <a href ="{{ week_viewer }}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="31" height="31" viewBox="0 0 31 31" fill="none">
+          <circle cx="15.5" cy="15.5" r="15.5" fill="#DC2626"/>
+          <circle cx="15.5" cy="15.5" r="15.5" fill="black" fill-opacity="0.2"/>
+          <path d="M13.7358 12.0909L15.7386 15.9048L17.7912 12.0909H20.8949L17.7344 17.5455L20.9801 23H17.8906L15.7386 19.2287L13.6222 23H10.4972L13.7358 17.5455L10.6108 12.0909H13.7358Z" fill="white"/>
+          </svg>
+        </a>
+      </div>
+      <div class="outer-info">
+        {{ start_date }}
+      </div>
+      <div class="add-link-container">
+      </div>
+    </div>
+    <div class="inner-container">
+      <div class="inner-info">
+        <div class="header">
+          
+          <div class="title">
+            {{ selected_event.title }}
+          </div>
+          <div class="location">
+            {{ selected_event.location }}
+          </div>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="breaker" fill="none">
+          <path d="M0.0135498 1.33057H335.986" stroke="white" stroke-width="2"/>
+        </svg>  
+
+        <div class="body">
+
+          <div class="start_time">
+            {{ selected_event.start_time }}
+          </div>
+          <div class="end_time">
+            {{ selected_event.end_time }}
+          </div>
+        </div>
+      
+        <svg xmlns="http://www.w3.org/2000/svg" class="breaker" fill="none">
+          <path d="M0.0135498 1.33057H335.986" stroke="white" stroke-width="2"/>
+        </svg>  
+
+        <div class="description">
+
+          {{ selected_event.description }}
+
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="breaker" fill="none">
+          <path d="M0.0135498 1.33057H335.986" stroke="white" stroke-width="2"/>
+        </svg>  
+        <div class="attendees">
+          <div class="controls">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="38" viewBox="0 0 40 38" fill="none">
+              <g id="user">
+              <path id="union-1" fill-rule="evenodd" clip-rule="evenodd" d="M19.9932 6.66425C16.3384 6.66425 13.3756 9.41542 13.3756 12.8092C13.3756 16.2029 16.3384 18.9541 19.9932 18.9541C23.6481 18.9541 26.6109 16.2029 26.6109 12.8092C26.6109 9.41542 23.6481 6.66425 19.9932 6.66425ZM26.0169 20.136C28.3894 18.4517 29.9197 15.7964 29.9197 12.8092C29.9197 7.71855 25.4755 3.5918 19.9932 3.5918C14.511 3.5918 10.0668 7.71855 10.0668 12.8092C10.0668 15.7964 11.5971 18.4517 13.9695 20.136C12.3061 20.8193 10.7757 21.7862 9.46462 23.0036C8.45224 23.9437 7.60061 25.0053 6.92632 26.1515C5.682 28.2665 6.18945 30.4231 7.59076 31.9481C8.93978 33.4161 11.1008 34.3163 13.3756 34.3163H26.6109C28.8857 34.3163 31.0467 33.4161 32.3957 31.9481C33.797 30.4231 34.3045 28.2665 33.0602 26.1515C32.3859 25.0053 31.5342 23.9437 30.5218 23.0036C29.2108 21.7862 27.6804 20.8193 26.0169 20.136ZM19.9932 22.0265C16.9218 22.0265 13.9762 23.1595 11.8043 25.1762C11.0168 25.9074 10.3545 26.733 9.83011 27.6244C9.32227 28.4877 9.48609 29.2772 10.1078 29.9537C10.7818 30.6872 11.9955 31.2439 13.3756 31.2439H26.6109C27.9909 31.2439 29.2047 30.6872 29.8787 29.9537C30.5004 29.2772 30.6642 28.4877 30.1564 27.6244C29.6319 26.733 28.9697 25.9074 28.1822 25.1762C26.0103 23.1595 23.0647 22.0265 19.9932 22.0265Z" fill="white"/>
+              </g>
+              </svg>
+    
+              <svg xmlns="http://www.w3.org/2000/svg" width="42" height="39" viewBox="0 0 42 39" fill="none">
+                <g id="user-add">
+                <path id="union-1" fill-rule="evenodd" clip-rule="evenodd" d="M14.8703 10.246C12.163 10.246 9.96836 12.2839 9.96836 14.7977C9.96836 17.3116 12.1631 19.3495 14.8704 19.3495C17.5776 19.3495 19.7723 17.3116 19.7723 14.7977C19.7723 12.2839 17.5776 10.246 14.8703 10.246ZM20.3739 20.5616C22.0866 19.1504 23.1659 17.0911 23.1659 14.7977C23.1659 10.5435 19.4519 7.09473 14.8703 7.09473C10.2888 7.09473 6.5747 10.5435 6.5747 14.7977C6.5747 17.0911 7.65406 19.1505 9.3668 20.5616C8.20824 21.1023 7.13891 21.8151 6.20483 22.6825C5.79058 23.0671 5.40899 23.4766 5.06176 23.907C4.28355 24.8718 3.91709 25.947 3.98162 27.0321C4.04516 28.1006 4.51845 29.0571 5.19508 29.8294C6.52656 31.349 8.75912 32.3046 11.0996 32.3046H18.6411C20.9816 32.3046 23.2142 31.349 24.5456 29.8294C25.2223 29.0571 25.6956 28.1006 25.7591 27.0321C25.8236 25.947 25.4572 24.8718 24.6789 23.907C24.3317 23.4766 23.9501 23.0671 23.5359 22.6825C22.6018 21.8151 21.5325 21.1023 20.3739 20.5616ZM14.8704 22.5008C12.5202 22.5008 10.2663 23.3677 8.60452 24.9107C8.30487 25.189 8.02897 25.485 7.77796 25.7962C7.43254 26.2244 7.35359 26.5803 7.37012 26.8584C7.38765 27.1531 7.5219 27.4918 7.82755 27.8406C8.46062 28.5632 9.69158 29.1534 11.0996 29.1534L18.6411 29.1534C20.0491 29.1534 21.2801 28.5632 21.9132 27.8406C22.2188 27.4918 22.3531 27.1531 22.3706 26.8584C22.3871 26.5803 22.3082 26.2244 21.9628 25.7962C21.7117 25.485 21.4358 25.189 21.1362 24.9107C19.4744 23.3677 17.2205 22.5008 14.8704 22.5008ZM32.31 13.3972C33.2472 13.3972 34.0069 14.1026 34.0069 14.9728V17.3362H36.5521C37.4892 17.3362 38.2489 18.0417 38.2489 18.9119C38.2489 19.782 37.4892 20.4875 36.5521 20.4875H34.0069V22.8509C34.0069 23.7211 33.2472 24.4265 32.31 24.4265C31.3729 24.4265 30.6132 23.7211 30.6132 22.8509V20.4875H28.0679C27.1308 20.4875 26.3711 19.782 26.3711 18.9119C26.3711 18.0417 27.1308 17.3362 28.0679 17.3362H30.6132V14.9728C30.6132 14.1026 31.3729 13.3972 32.31 13.3972Z" fill="white"/>
+                </g>
+              </svg>
+          </div>
+          <div class="attending-list">
+            {% for user in selected_event.attendee.all %}
+          <div>
+            {{ user }}
+          </div>
+          {% endfor %}
+          </div>
+        
+        
+        </div>
+      </div>
+
+
+    </div>
+
+  </div>
+
+</div>
+</div>
+
+
+
+
+
+{% endblock %}

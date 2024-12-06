@@ -1,0 +1,51 @@
+.attendee-options{
+
+
+  min-height: none;
+  height: 100%;
+  max-height:15vh;
+  overflow-y: scroll;
+  margin-right: 30px;
+
+  font-size: 1vw;
+  font-weight: 400;
+
+}
+
+.attendee-form-container{
+  margin-left: 20px;
+
+}
+
+.attendee-button{
+  margin-left: 20px;
+
+  border-radius: 4px;
+  
+  background-color: rgba(255, 255, 255, 1);
+  border: 2px solid #ffffff;
+  color: rgb(255, 102, 102);
+}
+
+
+.attendee-button:hover {
+  background-color: rgba(255, 102, 102, 0.5);
+  color: white;
+}
+
+.attendee-options::-webkit-scrollbar {
+  width: 0.5vw;
+  padding-right: 0.5625vw;
+}
+
+.attendee-options::-webkit-scrollbar-track {
+}
+
+.attendee-options::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border-radius: 10px;
+}
+
+.attendee-options::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}

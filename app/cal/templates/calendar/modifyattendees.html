@@ -1,0 +1,56 @@
+{% extends "calendar/eventmonthcard.html" %}
+
+{% block title %}
+My Calendar
+{% endblock %}
+
+{% load static %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{% static 'calendar/monthview.css' %}">
+<link rel="stylesheet" href="{% static 'calendar/monthevent.css' %}">
+<link rel="stylesheet" href="{% static 'calendar/month-event-form.css' %}">
+<link rel="stylesheet" href="{% static 'calendar/eventcard.css' %}">
+<link rel="stylesheet" href="{% static 'calendar/attendeeform.css' %}">
+
+{% endblock %}
+
+{% block attendee %}
+
+{% load mathfilters %}
+
+
+  <form method="post">
+    {% csrf_token %}
+    
+    {% for field in form %}
+    <div class="attendee-form-container">
+
+    <div class="">
+      <div class="">
+        {{ field.label_tag }}
+      </div>
+
+      <div class="attendee-options">
+        {{ field }}
+      </div>
+    </div>
+
+
+    <div class="">
+      {{ field.errors }}
+    </div>
+
+    </div>
+    {% endfor %}
+    <div class="white-background">
+      <button type="submit" class="attendee-button">
+        Edit Event
+      </button>
+    </div>
+  </form>
+
+
+
+{% endblock %}

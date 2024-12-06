@@ -1,0 +1,30 @@
+{% extends "calendar/base.html" %}
+
+{% block title %}
+My Calendar
+{% endblock %}
+
+{% load static %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{% static 'calendar/agendaview.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+{% load mathfilters %}
+{% load calendar_filters %}
+
+
+<div>
+  {{ current_user }}
+</div>
+
+<div>
+  {{ user_events }}
+</div>
+
+
+{% endblock %}

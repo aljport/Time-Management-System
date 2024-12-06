@@ -47,10 +47,12 @@ My Calendar
         <div class="selected-day-event-container">
           {% for event in current_day_event %}
 
+          {% url 'cal:montheventcard' month_date=start_month_value day_date=start_day_value year_date=start_year_value event_id=event.id as montheventcard %}
+          <a href ="{{ montheventcard }}">
           <div class="events-container">
             <div class="selected-day-event">
               <div class="red-main-event-bar">
-  
+                
               </div>
               <div class="event-card">
                 <div class="event-card-time">
@@ -64,7 +66,10 @@ My Calendar
                 </div>
               </div>
             </div>
-          </div>>
+
+          </a>
+
+          </div>
 
           {% endfor %}
         </div>

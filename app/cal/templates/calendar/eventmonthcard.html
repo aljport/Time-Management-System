@@ -1,0 +1,104 @@
+{% extends "calendar/monthviewer.html" %}
+
+{% block title %}
+My Calendar
+{% endblock %}
+
+{% load static %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{% static 'calendar/monthview.css' %}">
+<link rel="stylesheet" href="{% static 'calendar/monthevent.css' %}">
+<link rel="stylesheet" href="{% static 'calendar/eventcard.css' %}">
+
+{% endblock %}
+
+{% block monthviewer_content %}
+
+{% load mathfilters %}
+
+<div class="month-event-container">
+  
+  <div class="outer-container">
+    <div class="outer-info-container">
+      {% url 'cal:monthviewer' month_date=start_month_value day_date=start_day_value year_date=start_year_value as month_viewer %}
+      <div class="exit-container">
+        <a href ="{{ month_viewer }}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="31" height="31" viewBox="0 0 31 31" fill="none">
+          <circle cx="15.5" cy="15.5" r="15.5" fill="#DC2626"/>
+          <circle cx="15.5" cy="15.5" r="15.5" fill="black" fill-opacity="0.2"/>
+          <path d="M13.7358 12.0909L15.7386 15.9048L17.7912 12.0909H20.8949L17.7344 17.5455L20.9801 23H17.8906L15.7386 19.2287L13.6222 23H10.4972L13.7358 17.5455L10.6108 12.0909H13.7358Z" fill="white"/>
+          </svg>
+        </a>
+      </div>
+      <div class="outer-info">
+        {{ start_date }}
+        </div>
+
+      {% url 'cal:montheventedit' month_date=start_month_value day_date=start_day_value year_date=start_year_value event_id=selected_event.id selected_day=selected_day as editevent %}
+      <a href="{{ editevent }}">
+      <div class="add-link-container">
+
+        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="35" height="35" viewBox="0 0 48 48" fill="#fff">
+          <path d="M 36 5.0097656 C 34.205301 5.0097656 32.410791 5.6901377 31.050781 7.0507812 L 8.9160156 29.183594 C 8.4960384 29.603571 8.1884588 30.12585 8.0253906 30.699219 L 5.0585938 41.087891 A 1.50015 1.50015 0 0 0 6.9121094 42.941406 L 17.302734 39.974609 A 1.50015 1.50015 0 0 0 17.304688 39.972656 C 17.874212 39.808939 18.39521 39.50518 18.816406 39.083984 L 40.949219 16.949219 C 43.670344 14.228094 43.670344 9.7719064 40.949219 7.0507812 C 39.589209 5.6901377 37.794699 5.0097656 36 5.0097656 z M 36 7.9921875 C 37.020801 7.9921875 38.040182 8.3855186 38.826172 9.171875 A 1.50015 1.50015 0 0 0 38.828125 9.171875 C 40.403 10.74675 40.403 13.25325 38.828125 14.828125 L 36.888672 16.767578 L 31.232422 11.111328 L 33.171875 9.171875 C 33.957865 8.3855186 34.979199 7.9921875 36 7.9921875 z M 29.111328 13.232422 L 34.767578 18.888672 L 16.693359 36.962891 C 16.634729 37.021121 16.560472 37.065723 16.476562 37.089844 L 8.6835938 39.316406 L 10.910156 31.521484 A 1.50015 1.50015 0 0 0 10.910156 31.519531 C 10.933086 31.438901 10.975086 31.366709 11.037109 31.304688 L 29.111328 13.232422 z"></path>
+          </svg>
+        
+      </div>
+      </a>
+    </div>
+    <div class="inner-container">
+      <div class="inner-info">
+        <div class="header">
+          
+          <div class="title">
+            {{ selected_event.title }}
+          </div>
+          <div class="location">
+            {{ selected_event.location }}
+          </div>
+        </div>
+        <div class="line">
+        </div>
+
+        <div class="body">
+
+          <div class="start_time">
+            {{ selected_event.start_time }}
+          </div>
+          <div class="end_time">
+            {{ selected_event.end_time }}
+          </div>
+        </div>
+      
+        <div class="line">
+        </div>
+
+        <div class="description">
+
+          {{ selected_event.description }}
+
+        </div>
+        <div class="line">
+        </div> 
+        
+        {% block attendee %}
+
+        {% endblock %}
+
+      </div>
+
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+
+{% endblock %}

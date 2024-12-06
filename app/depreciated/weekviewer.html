@@ -1,0 +1,128 @@
+<div class="week-grid-container">
+  <div class="calendar-grid-week-container">
+    {% for name in day_names %}
+    {% if name == today_name %}
+    <div class="week-name week-day-container current-day">
+      {{ name }}
+    </div>
+    {% elif forloop.counter|mod:7 == 1 %}
+      <div class="week-name week-day-container weekend">
+        {{ name }}
+      </div>
+    {% elif forloop.counter|mod:7 == 0 %}
+    <div class="week-name week-day-container weekend">
+      {{ name }}
+    </div>
+    {% else %}
+    <div class="week-name week-day-container">
+      {{ name }}
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+
+  <div class="calendar-grid-week-container">
+    {% for date in day_nums %}
+    {% if date == today_date %}
+    <div class="day-name day-name-container current-day">
+      {{ date }}
+    </div>
+    {% elif forloop.counter|mod:7 == 1 %}
+    <div class="day-name day-name-container weekend">
+      {{ date }}
+    </div>
+    {% elif forloop.counter|mod:7 == 0 %}
+    <div class="day-name day-name-container weekend">
+      {{ date }}
+    </div>
+    {% else %}
+    <div class="day-name day-name-container">
+      {{ date }}
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+  <div class="big-container">
+
+    <div class="calendar-grid-number-container">
+      
+      {% for hour in hours %}
+      <div class="week-layout">
+
+      
+      <div class="hour-time">
+        {{ hour }}:00
+      </div>
+      <div class = "calendar-grid-container">
+        {% for day_num in day_nums %}
+        {% if day_num == today_date %}
+        <div class="week-day current-day">
+
+        </div>
+        {% elif forloop.counter|divisibleby:7%}
+        <div class="week-day weekend">
+          
+        </div>
+        {% elif forloop.counter|mod:7 == 1 %}
+        <div class="week-day weekend">
+
+        </div>
+        {% else %}
+        <div class="week-day">
+
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+
+      </div>
+      
+      {% endfor %}
+    </div>
+  <div class="week-hour-container">
+    
+
+    <div class="day-name-empty"></div>
+    {% for hour in hours %}
+    <div class="week-hour-display">
+      {{ hour }}:00
+    </div>
+    {% endfor %}
+    
+  </div>
+    <div class="calendar-grid-number-container">
+    <div class = "calendar-grid-container">
+      {% for hour in hours %}
+      <div class="week-hour-display">
+        {{ hour }}:00
+      </div>
+        {% for day_num in day_nums %}
+        {% if day_num == today_date %}
+        <div class="week-day current-day">
+
+        </div>
+        {% elif forloop.counter|divisibleby:7%}
+        <div class="week-day weekend">
+          
+        </div>
+        {% elif forloop.counter|mod:7 == 1 %}
+        <div class="week-day weekend">
+
+        </div>
+        {% else %}
+        <div class="week-day">
+
+        </div>
+        {% endif %}
+        {% endfor %}
+      {% if forloop.counter|divisibleby:7 == 0 and not forloop.last %}
+        </div><div class = "calendar-grid-container">
+      {% endif %}
+
+      {% endfor %}
+    </div>
+
+    </div>
+  </div>
+  </div>
+</div>
