@@ -52,7 +52,8 @@
   display: flex;
   flex-direction: row;
   margin-top: 0.15vh;
-  height: 2.9vh;
+  height: 3.4vh;
+  line-height: 24px;
 }
 
 .day-events-container{
@@ -107,4 +108,17 @@
 .link-container{
   width: 100%;
   height: 100%;
+}
+
+.excess-month-view{
+  margin-top: 0.5vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+
+}
+
+
+.month-event-icon{
+  fill: rgb(255, 102, 102);
 }

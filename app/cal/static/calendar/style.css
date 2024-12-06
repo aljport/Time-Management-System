@@ -160,3 +160,36 @@ html, body {
   flex-wrap: wrap;
   width: 100%;
 }
+
+.schedule-container{
+
+  color:#ffffff;
+
+}
+
+.schedule-container .header{
+  font-size: 1.7vw;
+  font-weight: 600;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-left: 0.75vw;
+  margin-right: 0.75vw;
+}
+
+.white-line{
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  width: 17vw;
+  background-color: #ffffff;
+  height: 1px;
+}
+
+.header a:link{
+  text-decoration: none;
+  color: #ffffff;
+}
+.header a:visited{
+  text-decoration: none;
+  color: #ffffff;
+}

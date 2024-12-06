@@ -14,3 +14,28 @@
   font-size: 2vw;
 
 }
+
+.form-container{
+  display: flex;
+}
+
+.form-css{
+  width: 100%;
+}
+
+.information-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+
+.information-box{
+  margin-top: 1vh;
+  margin-bottom: 1vh;
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}

@@ -1,6 +1,7 @@
 from django.http import HttpResponse, Http404
 from django.template import loader
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Event
@@ -11,7 +12,6 @@ from django.utils import timezone
 from .forms import EventForm
 from django.http import JsonResponse
 from django.views.generic.edit import UpdateView
-from users.models import Profile
 from .models import Event
 from .date_get import getOffset, getNextOffset, get_week_range, getNextMonth, getNextMonthName, getNextOffsetDate, getPreviousMonth, getPreviousMonthName
 
@@ -36,6 +36,9 @@ def getPrevMonthName():
   last_month = first - datetime.timedelta(days=1)
   return last_month.strftime("%B")
   
+
+
+@login_required(login_url='/users/login')
 def index(request):
   
   current_month_name = datetime.datetime.today().strftime("%B")
@@ -53,7 +56,7 @@ def index(request):
   }
   return render(request, "calendar/base.html", context)
 
-
+@login_required(login_url='/users/login')
 def weekview(request, month_date=int(datetime.datetime.now().strftime('%m')), 
                day_date=int(datetime.datetime.now().strftime('%d')), 
                year_date=int(datetime.datetime.now().strftime('%Y'))):
@@ -89,9 +92,44 @@ def weekview(request, month_date=int(datetime.datetime.now().strftime('%m')),
   prev_week_month = prev_week_end.strftime('%m')
   prev_week_year = prev_week_end.strftime('%Y')
 
-  current_user = request.user 
-  current_user_events = current_user.profile.created_events.all()
 
+  #Mini Calendar
+  #Get current date
+  now = datetime.datetime.now()
+  first_day_of_month = now.replace(day=1)
+  weekday_name = first_day_of_month.strftime('%A')
+  current_month_value = int(now.strftime('%m'))
+  current_day_value = int(now.strftime('%d'))
+  current_year_value = int(now.strftime('%Y'))
+  current_month_days = calendar.monthrange(current_year_value, current_month_value)[1]
+  month_days = list(range(1, current_month_days + 1))
+  start_date = datetime.date(current_year_value, current_month_value, current_day_value)
+  prev_month = getPreviousMonth(start_date)
+  prev_date = calendar.monthrange(prev_month.year, prev_month.month)[1]
+  prev_month_value = prev_month.strftime('%m')
+  next_month = getNextMonth(start_date, current_month_days)
+  next_month_value = next_month.strftime('%m')
+  offset = getOffset(weekday_name)
+  last_day = start_date.replace(day=current_month_days)
+  offset_nums = list(range( prev_date - int(offset) + 1, prev_date + 1))
+  next_offset = getNextOffsetDate(last_day.strftime('%A'))
+  next_offset_nums = list(range(1, next_offset + 1 ))
+  #end of mini calendar
+
+  if int(start_month_value) == current_month_value:
+     today_is_true = True
+  else:
+     today_is_true = False
+
+  #gets current logged in user
+  current_user = request.user
+  current_user_events = current_user.profile.created_events.all()
+  attending_events = current_user.profile.events.all()
+  current_user_events = (current_user_events | attending_events).distinct()
+  todays_events = current_user_events.filter(start_time__month=month_date, start_time__day=day_date)
+  month_events = current_user_events.filter(start_time__month=month_date, start_time__year=year_date)
+  next_month_events = current_user_events.filter(start_time__month=next_month_value, start_time__year=year_date)
+  prev_month_events = current_user_events.filter(start_time__month=prev_month_value, start_time__year=year_date)
   
   week_events = current_user_events.filter(start_time__lt=end_of_week, end_time__gte=start_of_week)
 
@@ -120,11 +158,21 @@ def weekview(request, month_date=int(datetime.datetime.now().strftime('%m')),
     "start_year_value" : start_year_value,
     "events" : week_events,
     "current_user" : current_user,
-
+    "today_is_true" : today_is_true,
+    
+    "month_days_list" : month_days,
+    "day_offset" : offset,
+    "month_events" : month_events,
+    "next_month_events" : next_month_events,
+    "prev_month_events" :prev_month_events,
+    "next_offset" : next_offset,
+    "next_offset_nums" : next_offset_nums,
+    "current_days" : current_month_days,
   }
 
   return render(request, "calendar/weekviewer.html", context)
 
+@login_required(login_url='/users/login')
 def eventweekcard(request, month_date=int(datetime.datetime.now().strftime('%m')), 
                day_date=int(datetime.datetime.now().strftime('%d')), 
                year_date=int(datetime.datetime.now().strftime('%Y')), event_id = Event.objects.first()):
@@ -160,8 +208,44 @@ def eventweekcard(request, month_date=int(datetime.datetime.now().strftime('%m')
   prev_week_month = prev_week_end.strftime('%m')
   prev_week_year = prev_week_end.strftime('%Y')
 
+
+  #Mini Calendar
+  #Get current date
+  now = datetime.datetime.now()
+  first_day_of_month = now.replace(day=1)
+  weekday_name = first_day_of_month.strftime('%A')
+  current_month_value = int(now.strftime('%m'))
+  current_day_value = int(now.strftime('%d'))
+  current_year_value = int(now.strftime('%Y'))
+  current_month_days = calendar.monthrange(current_year_value, current_month_value)[1]
+  month_days = list(range(1, current_month_days + 1))
+  start_date = datetime.date(current_year_value, current_month_value, current_day_value)
+  prev_month = getPreviousMonth(start_date)
+  prev_date = calendar.monthrange(prev_month.year, prev_month.month)[1]
+  prev_month_value = prev_month.strftime('%m')
+  next_month = getNextMonth(start_date, current_month_days)
+  next_month_value = next_month.strftime('%m')
+  offset = getOffset(weekday_name)
+  last_day = start_date.replace(day=current_month_days)
+  offset_nums = list(range( prev_date - int(offset) + 1, prev_date + 1))
+  next_offset = getNextOffsetDate(last_day.strftime('%A'))
+  next_offset_nums = list(range(1, next_offset + 1 ))
+  #end of mini calendar
+
+  if start_month_value == current_month_value:
+    today_is_true = True
+  else:
+    today_is_true = False
+
+  #gets current logged in user
   current_user = request.user
   current_user_events = current_user.profile.created_events.all()
+  attending_events = current_user.profile.events.all()
+  current_user_events = (current_user_events | attending_events).distinct()
+  todays_events = current_user_events.filter(start_time__month=month_date, start_time__day=day_date)
+  month_events = current_user_events.filter(start_time__month=month_date, start_time__year=year_date)
+  next_month_events = current_user_events.filter(start_time__month=next_month_value, start_time__year=year_date)
+  prev_month_events = current_user_events.filter(start_time__month=prev_month_value, start_time__year=year_date)
 
   week_events = current_user_events.filter(start_time__lt=end_of_week, end_time__gte=start_of_week)
 
@@ -197,10 +281,13 @@ def eventweekcard(request, month_date=int(datetime.datetime.now().strftime('%m')
     "events" : week_events,
     "selected_event" : my_event,
     "current_user" : current_user,
+    "today_is_true" : today_is_true,
+    
   }
 
   return render(request, "calendar/eventweekcard.html", context)
 
+@login_required(login_url='/users/login')
 def monthviewer(request, month_date=int(datetime.datetime.now().strftime('%m')), 
                 day_date=int(datetime.datetime.now().strftime('%d')), 
                 year_date=int(datetime.datetime.now().strftime('%Y'))):
@@ -261,14 +348,16 @@ def monthviewer(request, month_date=int(datetime.datetime.now().strftime('%m')),
   #gets current logged in user
   current_user = request.user
   current_user_events = current_user.profile.created_events.all()
-
+  attending_events = current_user.profile.events.all()
+  current_user_events = (current_user_events | attending_events).distinct()
   todays_events = current_user_events.filter(start_time__month=month_date, start_time__day=day_date)
+  month_events = current_user_events.filter(start_time__month=month_date, start_time__year=year_date)
+  next_month_events = current_user_events.filter(start_time__month=next_month_value, start_time__year=year_date)
+  prev_month_events = current_user_events.filter(start_time__month=prev_month_value, start_time__year=year_date)
 
-  month_events = current_user_events.filter(start_time__month=month_date)
 
-  next_month_events = current_user_events.filter(start_time__month=next_month_value)
-  prev_month_events = current_user_events.filter(start_time__month=prev_month_value)
-
+  my_todo_events = month_events.filter(start_time__day=day_date)
+  todo_events = my_todo_events[:5]
   
   context = {
     "start_month_date" : start_month_date,
@@ -287,6 +376,7 @@ def monthviewer(request, month_date=int(datetime.datetime.now().strftime('%m')),
     "prev_month_name": prev_month_name,
     "day_offset" : offset,
     "offset_numbers" : offset_nums,
+    "month_days_list" : days,
     "days_list" : days,
     "date" : timezone.now().day,
     "current_month" : current_month,
@@ -305,72 +395,12 @@ def monthviewer(request, month_date=int(datetime.datetime.now().strftime('%m')),
     "next_month_events" : next_month_events,
     "prev_month_events" :prev_month_events,
     "current_user" : current_user,
+    "todo_events" : todo_events,
   }
 
   return render(request, "calendar/monthviewer.html", context)
 
-def monthview(request):
-  current_day_name = datetime.datetime.today().strftime("%A")
-  current_year = datetime.datetime.today().year
-  current_month = datetime.datetime.today().month
-  current_month_name = datetime.datetime.today().strftime("%B")
-  current_month_days = calendar.monthrange(current_year, current_month)[1]
-  days = list(range(1, current_month_days + 1))
-  #days = list(range(1, 32))
-
-  #List of days
-  day_names = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
-
-  #Get current time
-  timenow = timezone.now().strftime("%d/%m/%Y, %H:%M:%S")
-  view_names = ["week", "month", "agenda"]
-
-  #Get current date
-  now = datetime.datetime.now()
-
-  # Find the first day of the current month
-  first_day_of_month = now.replace(day=1)
-  # Get the name of the weekday for the first day of the month
-  # The .strftime('%A') will return the full weekday name (e.g., "Monday")
-  weekday_name = first_day_of_month.strftime('%A')
-
-  prev_month = getPrevMonth()
-  prev_date = calendar.monthrange(prev_month.year, prev_month.month)[1]
-  prev_month_name = getPrevMonthName()
-
-  #previous month offsets
-  offset = getOffset(weekday_name)
-  offset_nums = list(range( prev_date - int(offset) + 1, prev_date + 1))
-
-  month_days = 31
-  total_days = list(range(1, month_days + offset + 1))
-
-  next_offset = getNextOffset(current_month_days)
-  next_offset_nums = list(range(1, offset + 1 ))
-
-
-  context = {
-    "days_list" : days,
-    "day_names" : day_names,
-    "current_days" : current_month_days,
-    "time" : timenow,
-    "views" : view_names,
-    "date" : timezone.now().day,
-    "day_name"  : current_day_name,
-    "first_day" : weekday_name,
-    "day_offset" : offset,
-    "total_days" : total_days,
-    "offset_numbers" : offset_nums,
-    "next_offset" : next_offset,
-    "next_offset_nums" : next_offset_nums,
-    "current_month" : current_month_name,
-    "prev_month" : prev_month_name,
-    "prev_date" : prev_date,
-    
-  }
-  return render(request, "calendar/monthview.html", context)
-
-
+@login_required(login_url='/users/login')
 def monthevent(request, month_date, day_date, year_date, selected_day):
 
   #passed in Information
@@ -426,21 +456,22 @@ def monthevent(request, month_date, day_date, year_date, selected_day):
   next_offset = getNextOffsetDate(last_day.strftime('%A'))
   next_offset_nums = list(range(1, next_offset + 1 ))
 
+  #gets current logged in user
   current_user = request.user
   current_user_events = current_user.profile.created_events.all()
-
+  attending_events = current_user.profile.events.all()
+  current_user_events = (current_user_events | attending_events).distinct()
   todays_events = current_user_events.filter(start_time__month=month_date, start_time__day=day_date)
-
-  month_events = current_user_events.filter(start_time__month=month_date)
-
-  next_month_events = current_user_events.filter(start_time__month=next_month_value)
-  prev_month_events = current_user_events.filter(start_time__month=prev_month_value)
+  month_events = current_user_events.filter(start_time__month=month_date, start_time__year=year_date)
+  next_month_events = current_user_events.filter(start_time__month=next_month_value, start_time__year=year_date)
+  prev_month_events = current_user_events.filter(start_time__month=prev_month_value, start_time__year=year_date)
 
   current_day_event = current_user_events.filter(start_time__date__lte=datetime.datetime(year_date, month_date, selected_day),end_time__date__gte=datetime.datetime(year_date, month_date, selected_day))
 
   selected_day_event = datetime.date(start_year_date, start_month_date, selected_day)
 
-  
+  my_todo_events = month_events.filter(start_time__day=day_date)
+  todo_events = my_todo_events[:5]
 
   context = {
     "selected_day" : selected_day,
@@ -480,9 +511,12 @@ def monthevent(request, month_date, day_date, year_date, selected_day):
     "prev_month_events" :prev_month_events,
     "current_day_event" : current_day_event,
     "current_user" : current_user,
+    "todo_events" : todo_events,
+    "month_days_list" : days,
   }
   return render(request, "calendar/monthevent.html", context)
 
+@login_required(login_url='/users/login')
 def eventmonthcard(request, month_date, day_date, year_date, event_id):
    
   #passed in Information
@@ -539,16 +573,21 @@ def eventmonthcard(request, month_date, day_date, year_date, event_id):
   next_offset_nums = list(range(1, next_offset + 1 ))
 
 
+  #gets current logged in user
   current_user = request.user
   current_user_events = current_user.profile.created_events.all()
-
-  month_events = current_user_events.filter(start_time__month=month_date)
-
-  next_month_events = current_user_events.filter(start_time__month=next_month_value)
-  prev_month_events = current_user_events.filter(start_time__month=prev_month_value)
+  attending_events = current_user.profile.events.all()
+  current_user_events = (current_user_events | attending_events).distinct()
+  todays_events = current_user_events.filter(start_time__month=month_date, start_time__day=day_date)
+  month_events = current_user_events.filter(start_time__month=month_date, start_time__year=year_date)
+  next_month_events = current_user_events.filter(start_time__month=next_month_value, start_time__year=year_date)
+  prev_month_events = current_user_events.filter(start_time__month=prev_month_value, start_time__year=year_date)
 
   selected_event = current_user_events.filter(pk=event_id)
   my_event = selected_event.first()
+
+  my_todo_events = month_events.filter(start_time__day=day_date)
+  todo_events = my_todo_events[:5]
 
   context = {
     "start_month_date" : start_month_date,
@@ -587,11 +626,16 @@ def eventmonthcard(request, month_date, day_date, year_date, event_id):
     "id" : event_id,
     "current_user" : current_user,
     "selected_day" : selected_day,
+    "todo_events" : todo_events,
+    "month_days_list" : days,
   }
 
   return render(request, "calendar/eventcardmonthdefault.html", context)
 
-def create_event_card(request, month_date, day_date, year_date, selected_day):
+@login_required(login_url='/users/login')
+def create_event_card(request, month_date=int(datetime.datetime.now().strftime('%m')), 
+                day_date=int(datetime.datetime.now().strftime('%d')), 
+                year_date=int(datetime.datetime.now().strftime('%Y')), selected_day=int(datetime.datetime.now().strftime('%d'))):
 
   #passed in Information
   start_month_date = month_date
@@ -636,13 +680,16 @@ def create_event_card(request, month_date, day_date, year_date, selected_day):
   next_offset = getNextOffsetDate(last_day.strftime('%A'))
   next_offset_nums = list(range(1, next_offset + 1 ))
 
+  #gets current logged in user
   current_user = request.user
   current_user_events = current_user.profile.created_events.all()
-
+  attending_events = current_user.profile.events.all()
+  current_user_events = (current_user_events | attending_events).distinct()
   todays_events = current_user_events.filter(start_time__month=month_date, start_time__day=day_date)
-  month_events = current_user_events.filter(start_time__month=month_date)
-  next_month_events = current_user_events.filter(start_time__month=next_month_value)
-  prev_month_events = current_user_events.filter(start_time__month=prev_month_value)
+  month_events = current_user_events.filter(start_time__month=month_date, start_time__year=year_date)
+  next_month_events = current_user_events.filter(start_time__month=next_month_value, start_time__year=year_date)
+  prev_month_events = current_user_events.filter(start_time__month=prev_month_value, start_time__year=year_date)
+
   current_day_event= current_user_events.filter(start_time__month=month_date, start_time__day=selected_day)
   selected_day_event = datetime.date(start_year_date, start_month_date, selected_day)
 
@@ -658,6 +705,8 @@ def create_event_card(request, month_date, day_date, year_date, selected_day):
 
   rendered_form = form.render("calendar/month_event_format.html")
 
+  my_todo_events = month_events.filter(start_time__day=day_date)
+  todo_events = my_todo_events[:5]
   
   context = {
     "start_date" : selected_day_event .strftime("%B %d, %Y"),
@@ -697,11 +746,13 @@ def create_event_card(request, month_date, day_date, year_date, selected_day):
     "current_day_event" : current_day_event,
     "form" : rendered_form,
     "current_user" : current_user,
+    "month_days_list" : days,
+    "todo_events" : todo_events,
   }
 
   return render(request, "calendar/eventcreatecard.html", context)
 
-
+@login_required(login_url='/users/login')
 def editevent(request, month_date, day_date, year_date, event_id, selected_day=int(datetime.datetime.now().strftime('%d'))):
    
 
@@ -751,11 +802,16 @@ def editevent(request, month_date, day_date, year_date, event_id, selected_day=i
   current_user = request.user
   current_user_events = current_user.profile.created_events.all()
 
-  #Month Events
+  #gets current logged in user
+  current_user = request.user
+  current_user_events = current_user.profile.created_events.all()
+  attending_events = current_user.profile.events.all()
+  current_user_events = (current_user_events | attending_events).distinct()
   todays_events = current_user_events.filter(start_time__month=month_date, start_time__day=day_date)
-  month_events = current_user_events.filter(start_time__month=month_date)
-  next_month_events = current_user_events.filter(start_time__month=next_month_value)
-  prev_month_events = current_user_events.filter(start_time__month=prev_month_value)
+  month_events = current_user_events.filter(start_time__month=month_date, start_time__year=year_date)
+  next_month_events = current_user_events.filter(start_time__month=next_month_value, start_time__year=year_date)
+  prev_month_events = current_user_events.filter(start_time__month=prev_month_value, start_time__year=year_date)
+
   current_day_event = current_user_events.filter(start_time__date__lte=datetime.datetime(year_date, month_date, selected_day),end_time__date__gte=datetime.datetime(year_date, month_date, selected_day))
   selected_day_event = datetime.date(start_year_date, start_month_date, selected_day)
 
@@ -771,6 +827,8 @@ def editevent(request, month_date, day_date, year_date, event_id, selected_day=i
     print("Not Post")
     form = EditEventForm(instance=event)
   
+  my_todo_events = month_events.filter(start_time__day=day_date)
+  todo_events = my_todo_events[:5]
   #rendered_form = form.render("calendar/month_event_format.html")
 
   context = {
@@ -810,12 +868,14 @@ def editevent(request, month_date, day_date, year_date, event_id, selected_day=i
     "current_day_event" : current_day_event,
     "form" : form,
     "current_user" : current_user,
+    "month_days_list" : days,
+    "todo_events" : todo_events,
   }
 
 
   return render(request, "calendar/editevent.html", context)
 
-
+@login_required(login_url='/users/login')
 def modifyattendees(request, month_date, day_date, year_date, event_id, selected_day=int(datetime.datetime.now().strftime('%d'))):
    
   #passed in Information
@@ -861,13 +921,21 @@ def modifyattendees(request, month_date, day_date, year_date, event_id, selected
   next_offset = getNextOffsetDate(last_day.strftime('%A'))
   next_offset_nums = list(range(1, next_offset + 1 ))
 
+  #gets current logged in user
   current_user = request.user
   current_user_events = current_user.profile.created_events.all()
-
+  attending_events = current_user.profile.events.all()
   todays_events = current_user_events.filter(start_time__month=month_date, start_time__day=day_date)
-  month_events = current_user_events.filter(start_time__month=month_date)
-  next_month_events = current_user_events.filter(start_time__month=next_month_value)
-  prev_month_events = current_user_events.filter(start_time__month=prev_month_value)
+  month_events = current_user_events.filter(start_time__month=month_date, start_time__year=year_date)
+  month_attending_events = attending_events.filter(start_time__month=month_date, start_time__year=year_date)
+  month_events = (month_events | month_attending_events).distinct()
+  next_month_events = current_user_events.filter(start_time__month=next_month_value, start_time__year=year_date)
+  next_month_attending_events = attending_events.filter(start_time__month=next_month_value, start_time__year=year_date)
+  next_month_events = (next_month_events | next_month_attending_events).distinct()
+  prev_month_events = current_user_events.filter(start_time__month=prev_month_value, start_time__year=year_date)
+  prev_month_attending_events = attending_events.filter(start_time__month=prev_month_value, start_time__year=year_date)
+  prev_month_events = (prev_month_events | prev_month_attending_events).distinct()
+
   current_day_event = current_user_events.filter(start_time__date__lte=datetime.datetime(year_date, month_date, selected_day),end_time__date__gte=datetime.datetime(year_date, month_date, selected_day))
   selected_day_event = datetime.date(start_year_date, start_month_date, selected_day)
 
@@ -884,6 +952,9 @@ def modifyattendees(request, month_date, day_date, year_date, event_id, selected
       form = AttendeeForm(instance=event, user=request.user)
   
   rendered_form = form.render("calendar/attendees_form.html")
+
+  my_todo_events = month_events.filter(start_time__day=day_date)
+  todo_events = my_todo_events[:5]
 
   context = {
     "start_month_date" : start_month_date,
@@ -923,6 +994,8 @@ def modifyattendees(request, month_date, day_date, year_date, event_id, selected
     "form" : form,
     "current_user" : current_user,
     "selected_event" : my_event,
+    "month_days_list" : days,
+    "todo_events" : todo_events,
   }
 
   return render(request, "calendar/modifyattendees.html", context)
@@ -948,7 +1021,7 @@ def agendaview(request):
   return render(request, "calendar/agendaview.html", context)
 
 
-
+@login_required(login_url='/users/login')
 def create_event(ev_req):
     if ev_req.method == 'POST':
         form = EventForm(ev_req.POST) 

@@ -33,6 +33,8 @@
   width: 100%;
   max-width: 73.5vw;
   border-bottom: 1px solid #E0E0E0;
+  border-right: 0.5px solid #E0E0E0;
+  border-left: 0.5px solid #E0E0E0;
 }
 .week-columns-container{
   width: 100%;
@@ -107,7 +109,21 @@
   max-width: 10.5vw;
   
 }
-
+.week-name-day{
+  color:#5c5c5c;
+  
+  border-right: 0.5px solid #E0E0E0;
+  border-left: 0.5px solid #E0E0E0;
+}
+.week-date{
+  font-weight: 600;
+  font-size: 1.78vw;
+  border-right: 0.5px solid #E0E0E0;
+  border-left: 0.5px solid #E0E0E0;
+}
+.current-day{
+  background-color: #eff6ff;
+}
 
 .week-event-container .red-event{
   background-color: rgba(255, 102, 102, 0.20);

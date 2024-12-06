@@ -1,46 +1,80 @@
-<html lang="en">
-    <body>
-        <div class="container mt-5">
-            <form class="col-6 mx-auto card p-3 shadow-lg" method="post" enctype="multipart/form-data">
+{% extends "account_information.html" %}
 
-                {% csrf_token %}
+{% block title %}
+Register
+{% endblock %}
 
-                <p><a href="/cal/month"> Return to your Calendar </a></p>
+{% load static %}
 
-                <h1>Friend List</h1>
+{% block head %}
 
-                <div class="alert alert-primary" role="alert">
-                    {% for message in messages %}
-                    {{ message }}
-                    {% endfor %}
-                </div>
+<link rel="stylesheet" href="{% static 'calendar/monthview.css' %}">
+<link rel="stylesheet" href="{% static 'accountinfo.css' %}">
+<link rel="stylesheet" href="{% static 'friendlist.css' %}">
+{% endblock %}
 
-                {% for friend in friends %}
-                
-                <h2>{{friend.Amigo.first_name}} {{friend.Amigo.last_name}}</h2>
-                    {% if friend.viewable %}
-                        {% if friend.requestPending %}
-                            <a href="{% url 'users:accept_friend' friend.Amigo.username %}">Accept Friend Request</a>
-                            <a href="{% url 'users:reject_friend' friend.Amigo.username %}">Reject Friend Request</a>
-                        {% else %}
-                            <a href="{% url 'users:update_friend' friend.Amigo.username %}">View Calendar</a>
-                        {% endif %}
-                    {% else %}
-                        <h3>You are currently waiting for a response to your friend request to this user</h3>
-                    {% endif %}
-                
-                {% endfor %}
+{% block friendlist %}
 
+{% load mathfilters %}
 
-                <div class="form-group">
-                    <label for="username">
-                        Want Friends? Put in their Username here
-                    </label>
-                    <input type="text" class="form-control" name="username" id="username" placeholder="Enter Username" required>
-                </div>
+<div class="big-container">
+    <form class="col-6 mx-auto card p-3 shadow-lg" method="post" enctype="multipart/form-data">
 
-                
-            </form>
+        {% csrf_token %}
+
+        <div class="alert alert-primary" role="alert">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
         </div>
-    </body>
-</html>
+
+        <div class="border-friends">
+        {% for friend in friends %}
+        <div class="friend-box">
+            <div class="friend-name">
+                {{friend.Amigo.first_name}} {{friend.Amigo.last_name}}
+            </div>
+            <div class="status">
+                {% if friend.viewable %}
+                    {% if friend.requestPending %}
+                        <div>
+                            Incoming Requests
+                        </div>
+                        <a href="{% url 'users:accept_friend' friend.Amigo.username %}">Accept Friend Request</a>
+                        <a href="{% url 'users:reject_friend' friend.Amigo.username %}">Reject Friend Request</a>
+                    {% else %}
+                        <a href="{% url 'users:update_friend' friend.Amigo.username %}">
+                            <div>
+                                View Calendar
+                            </div>
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <div>
+                        You are currently waiting for a response to your friend request to this user
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        </div>
+
+
+        <div class="add-friends-box">
+            <div class="bold-box">
+                Want Friends?
+            </div>
+            <div class="basic-box">
+                Put in their Username here
+            </div>
+            <label for="username" class="add-friends-box">
+                
+            </label>
+            <input type="text" class="form-control" name="username" id="username" placeholder="Enter Username" required>
+        </div>
+
+        
+    </form>
+</div>
+
+{% endblock %}

@@ -10,6 +10,12 @@ import random
 from .models import Friends, Profile
 from django.http import JsonResponse
 
+from django.utils import timezone
+import datetime
+import calendar
+
+from cal.date_get import getOffset, getNextOffset, get_week_range, getNextMonth, getNextMonthName, getNextOffsetDate, getPreviousMonth, getPreviousMonthName
+
 RESET_PASSWORD_USERNAME = ""
 NUMBER = ""
 CURRENT_USER = None
@@ -139,7 +145,8 @@ def password_change_page(request):
 
 def password_confirm_page(request):
     return render(request, 'password_confirm.html')
-        
+
+
 def account_information_page(request):
     if request.method == 'POST':
         logout(request)
@@ -151,7 +158,70 @@ def account_information_page(request):
     username = request.user.username
     name = request.user.get_full_name()
     email = request.user.email
-    return render(request, 'account_information.html', {'username' : username, 'name' : name, 'email' : email})
+
+
+    #Mini Calendar
+    #Get current date
+    now = datetime.datetime.now()
+    first_day_of_month = now.replace(day=1)
+    weekday_name = first_day_of_month.strftime('%A')
+    current_month_value = int(now.strftime('%m'))
+    current_day_value = int(now.strftime('%d'))
+    current_year_value = int(now.strftime('%Y'))
+    current_month_days = calendar.monthrange(current_year_value, current_month_value)[1]
+    month_days = list(range(1, current_month_days + 1))
+    start_date = datetime.date(current_year_value, current_month_value, current_day_value)
+    prev_month = getPreviousMonth(start_date)
+    prev_date = calendar.monthrange(prev_month.year, prev_month.month)[1]
+    prev_month_value = prev_month.strftime('%m')
+    next_month = getNextMonth(start_date, current_month_days)
+    next_month_value = next_month.strftime('%m')
+    offset = getOffset(weekday_name)
+    last_day = start_date.replace(day=current_month_days)
+    offset_nums = list(range( prev_date - int(offset) + 1, prev_date + 1))
+    next_offset = getNextOffsetDate(last_day.strftime('%A'))
+    next_offset_nums = list(range(1, next_offset + 1 ))
+    #end of mini calendar
+
+    current_user = request.user 
+    current_user_events = current_user.profile.created_events.all()
+    attending_events = current_user.profile.events.all()
+    month_date = current_month_value
+    year_date = current_year_value
+    month_events = current_user_events.filter(start_time__month=month_date, start_time__year=year_date)
+    month_attending_events = attending_events.filter(start_time__month=month_date, start_time__year=year_date)
+    month_events = (month_events | month_attending_events).distinct()
+    next_month_events = current_user_events.filter(start_time__month=next_month_value, start_time__year=year_date)
+    next_month_attending_events = attending_events.filter(start_time__month=next_month_value, start_time__year=year_date)
+    next_month_events = (next_month_events | next_month_attending_events).distinct()
+    prev_month_events = current_user_events.filter(start_time__month=prev_month_value, start_time__year=year_date)
+    prev_month_attending_events = attending_events.filter(start_time__month=prev_month_value, start_time__year=year_date)
+    prev_month_events = (prev_month_events | prev_month_attending_events).distinct()
+
+
+    my_todo_events = month_events.filter(start_time__day=current_day_value)
+    todo_events = my_todo_events[:5]
+    user = request.user
+    user_profile = request.user.profile
+    context ={
+        'username' : username, 
+        'name' : name, 
+        'email' : email,
+        "current_user" : user,
+        'friends' : user_profile.friendList.all,
+        
+        "todo_events" : todo_events,
+        "offset_numbers" : offset_nums,
+        "month_days_list" : month_days,
+        "day_offset" : offset,
+        "month_events" : month_events,
+        "next_month_events" : next_month_events,
+        "prev_month_events" :prev_month_events,
+        "next_offset" : next_offset,
+        "next_offset_nums" : next_offset_nums,
+        "current_days" : current_month_days,
+    }
+    return render(request, 'account_information.html', context)
 
 def friend_list_page(request):
     global CURRENT_USER
@@ -193,7 +263,75 @@ def friend_list_page(request):
     CURRENT_USER = request.user
     CURRENT_USER.profile.isViewer = True
     user_profile = request.user.profile
-    return render(request, 'friend_list.html', {'friends' : user_profile.friendList.all})
+
+
+    username = request.user.username
+    name = request.user.get_full_name()
+    email = request.user.email
+
+    user = request.user
+
+    #Mini Calendar
+    #Get current date
+    now = datetime.datetime.now()
+    first_day_of_month = now.replace(day=1)
+    weekday_name = first_day_of_month.strftime('%A')
+    current_month_value = int(now.strftime('%m'))
+    current_day_value = int(now.strftime('%d'))
+    current_year_value = int(now.strftime('%Y'))
+    current_month_days = calendar.monthrange(current_year_value, current_month_value)[1]
+    month_days = list(range(1, current_month_days + 1))
+    start_date = datetime.date(current_year_value, current_month_value, current_day_value)
+    prev_month = getPreviousMonth(start_date)
+    prev_date = calendar.monthrange(prev_month.year, prev_month.month)[1]
+    prev_month_value = prev_month.strftime('%m')
+    next_month = getNextMonth(start_date, current_month_days)
+    next_month_value = next_month.strftime('%m')
+    offset = getOffset(weekday_name)
+    last_day = start_date.replace(day=current_month_days)
+    offset_nums = list(range( prev_date - int(offset) + 1, prev_date + 1))
+    next_offset = getNextOffsetDate(last_day.strftime('%A'))
+    next_offset_nums = list(range(1, next_offset + 1 ))
+    #end of mini calendar
+
+    current_user = request.user 
+    current_user_events = current_user.profile.created_events.all()
+    attending_events = current_user.profile.events.all()
+    month_date = current_month_value
+    year_date = current_year_value
+    month_events = current_user_events.filter(start_time__month=month_date, start_time__year=year_date)
+    month_attending_events = attending_events.filter(start_time__month=month_date, start_time__year=year_date)
+    month_events = (month_events | month_attending_events).distinct()
+    next_month_events = current_user_events.filter(start_time__month=next_month_value, start_time__year=year_date)
+    next_month_attending_events = attending_events.filter(start_time__month=next_month_value, start_time__year=year_date)
+    next_month_events = (next_month_events | next_month_attending_events).distinct()
+    prev_month_events = current_user_events.filter(start_time__month=prev_month_value, start_time__year=year_date)
+    prev_month_attending_events = attending_events.filter(start_time__month=prev_month_value, start_time__year=year_date)
+    prev_month_events = (prev_month_events | prev_month_attending_events).distinct()
+
+
+
+    my_todo_events = month_events.filter(start_time__day=current_day_value)
+    todo_events = my_todo_events[:5]
+    context = {
+        'friends' : user_profile.friendList.all,
+        'username' : username, 
+        'name' : name, 
+        'email' : email,
+        "current_user" : user,
+        "todo_events" : todo_events,
+
+        "offset_numbers" : offset_nums,
+        "month_days_list" : month_days,
+        "day_offset" : offset,
+        "month_events" : month_events,
+        "next_month_events" : next_month_events,
+        "prev_month_events" :prev_month_events,
+        "next_offset" : next_offset,
+        "next_offset_nums" : next_offset_nums,
+        "current_days" : current_month_days,
+    }
+    return render(request, 'friend_list.html', context)
 
 def accept_friend(request, friend_username):
     

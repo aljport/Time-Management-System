@@ -18,28 +18,36 @@ Login
 
 
 <div class="content-container-main">
+
+  <div class="header">
+    The Only Calendar You Will Ever Need
+
+  </div>
   <div class="links-container">
 
-    {% url 'users:register_page' as register %}
-    <a href ="{{ register }}">
-      <div class = "link-format">
-        Register
+    <div class="register-box">
+      <div class="body">
+        Get Started Now!
       </div>
-    </a>
+      {% url 'users:register_page' as register %}
+      <a href ="{{ register }}">
+        <button class = "button-sign">
+          Register
+        </button>
+      </a>
+    </div>
 
-    {% url 'users:login_page' as login %}
-    <a href ="{{ login }}">
-      <div class = "link-format">
-        Login
+    <div class="login-box">
+      <div class="body">
+        Continue Planning
       </div>
-    </a>
-
-    {% url 'cal:index' as cal_home %}
-    <a href ="{% url 'cal:index' %}">
-      <div class = "link-format">
-        Go to Calendar
-      </div>
-    </a>
+      {% url 'users:login_page' as login %}
+      <a href ="{{ login }}">
+        <button class="button-sign">
+          Login
+        </button>
+      </a>
+    </div>
 
   </div>
 </div>
