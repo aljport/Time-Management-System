@@ -56,8 +56,9 @@
               </svg>
             </div>
           </div>
-
+<!-- Mini calendar code starts -->
           <div class="mini-cal-container">
+            <!-- Row containing days of the week -->
             <div class = "daysRow">
                 <div class="day"> SUN </div>
                 <div class="day"> MON </div>
@@ -71,6 +72,7 @@
             <div class = "grid-container">
               <div class = "grid">
                 {% for day in offset_numbers %}
+        <!-- Add stray numbers from previous month -->
                     <div class="minicalCol"> 
                       <div class = "day-numMini" style="color: #71717A;">
                         {{ day }}
@@ -78,6 +80,7 @@
                     </div>
                 {% endfor %}  
                 {% for day in month_days_list %}  
+        <!-- Add actual days of the month -->
                 {% with forloop.counter|add:day_offset as counter_with_offset %}
                   {% if day == date %}
                     <div class="minicalCol">
@@ -89,6 +92,7 @@
                         {% for event in month_events|find_ongoing_event:day %}
                         {% if forloop.counter < 4 %}
                         <div class="event-container">
+          <!-- Uses svg to add event dots, up to 3 dots/events -->
                           <svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" viewBox="0 0 5 5" fill="none" class="color-{{ forloop.counter }}">
                             <circle cx="2.14282" cy="2.625" r="2" fill=""/>
                           </svg>
@@ -119,7 +123,7 @@
                   {% endif %}
                 {% endwith %} 
                 {% endfor %}  
-  
+  <!-- Put stray days of next month -->
                 {% for day in next_offset_nums %}
                 {% with forloop.counter|add:day_offset as counter_with_offset %}
                 {% with counter_with_offset|add:current_days as next_counter_offset %}
@@ -182,7 +186,7 @@
 
         </div>
       </div>  
-
+<!-- Mini calendar code ends, main calendar code begins -->
       <div class="main-container">
         <div class = "nav-bar-container">
           <div class = "nav-bar">
