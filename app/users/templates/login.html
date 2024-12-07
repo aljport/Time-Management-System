@@ -30,7 +30,7 @@ Login
           {{ message }}
           {% endfor %}
       </div>
-  
+  <!-- Enter login credentials -->
       <div class="information-container">
 
         <div class="information-box">
@@ -49,7 +49,7 @@ Login
           
       </div>
       </div>
-      
+       <!-- Sends you to another link if you click reset password or register now -->
       <div>Forgot your Password: <a href="{% url 'users:username_get_page' %}"> Reset Here </a></div>
   
       <div>Register Now: <a href= "{% url 'users:register_page' %}"> Register </a></div>
