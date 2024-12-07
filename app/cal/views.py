@@ -1042,6 +1042,7 @@ def create_event(ev_req):
 
     return render(ev_req, 'create_event.html', {'form': form})
 
+# creates the notification for the user creating the event 
 def create_notifications(event, attendees):
     notifications = [   
         Notifications(event=event, user=attendee)
@@ -1049,7 +1050,8 @@ def create_notifications(event, attendees):
     ]
     Notifications.objects.bulk_create(notifications)
 
-
+# handles post request to change the status of a meeting 
+# updates meeting and sends notification to participants
 def change_meeting_status(request):
     if request.method == 'POST':
         meeting_id = request.POST.get('meeting_id')
@@ -1070,6 +1072,11 @@ def change_meeting_status(request):
         return JsonResponse({'status': 'success', 'message': 'Meeting status updated.'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
 
+
+# verify request and retrives the request data 
+# validate date and time format and that attendee exists
+# check if time is available 
+# create meeting
 def request_meeting(request):
     if request.method == 'POST':
         requester = request.user
@@ -1105,7 +1112,7 @@ def request_meeting(request):
             return JsonResponse({'status': 'error', 'message': 'The requested time is not available.'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
         
-
+# blocks time slot after verifying that it is able to be blocked/ meeting is able to be created 
 def block_time_slot(request):
     if request.method == 'POST':
         user = request.user
