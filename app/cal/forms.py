@@ -5,7 +5,9 @@ from django.views.generic.edit import UpdateView
 
 from users.models import Profile
 
+# manages event creation and validation
 class EventForm(forms.ModelForm):
+    # fields for varying info per event object
     start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
     start_time = forms.TimeField(widget=forms.TimeInput(attrs={'type': 'time'}))
     end_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
@@ -16,6 +18,7 @@ class EventForm(forms.ModelForm):
         fields = ['title', 'start_date', 'start_time', 'end_date', 'end_time', 'description', 'location']
         template_name = "calendar/month_event_format.html"
 
+    # performs custom validation and data processing
     def clean(self):
         cleaned_data = super().clean()
         start_date = cleaned_data.get("start_date")
@@ -23,6 +26,7 @@ class EventForm(forms.ModelForm):
         end_date = cleaned_data.get("end_date")
         end_time = cleaned_data.get("end_time")
 
+        #combine to single object + make timezone aware
         if start_date and start_time:
             cleaned_data['start_time'] = timezone.make_aware(
                 timezone.datetime.combine(start_date, start_time)
@@ -32,12 +36,13 @@ class EventForm(forms.ModelForm):
                 timezone.datetime.combine(end_date, end_time)
             )
 
-        # Validate that end time is after start time
+        # validate that end time is after start time
         if cleaned_data.get("start_time") and cleaned_data.get("end_time"):
             if cleaned_data["end_time"] <= cleaned_data["start_time"]:
                 self.add_error("end_time", "End time must be after start time.")
         return cleaned_data
 
+# form to make each user an attendee per event
 class AttendeeForm(forms.ModelForm):
     attendee = forms.ModelMultipleChoiceField(
         queryset=Profile.objects.none(),
@@ -61,6 +66,7 @@ class AttendeeForm(forms.ModelForm):
         else:
             self.fields['attendee'].queryset = Profile.objects.all()
 
+# form to edit the event form through different methods of validation
 class EditEventForm(forms.ModelForm):
 
     start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
