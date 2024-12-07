@@ -21,7 +21,7 @@ Register
     <form class="col-6 mx-auto card p-3 shadow-lg" method="post" enctype="multipart/form-data">
 
         {% csrf_token %}
-
+        <!-- Messages that change based on User interaction -->
         <div class="alert alert-primary" role="alert">
             {% for message in messages %}
             {{ message }}
@@ -29,20 +29,27 @@ Register
         </div>
 
         <div class="border-friends">
+        <!-- A Loop that goes through each of the user's friends -->
         {% for friend in friends %}
         <div class="friend-box">
+            <!-- States the users name -->
             <div class="friend-name">
                 {{friend.Amigo.first_name}} {{friend.Amigo.last_name}}
             </div>
             <div class="status">
+                <!-- Checks if the user has sent the request and the request has not been accepted or rejected -->
                 {% if friend.viewable %}
+                    <!-- If user is the receiving user, checks if the request is pending -->
                     {% if friend.requestPending %}
                         <div>
                             Incoming Requests
                         </div>
+                        <!-- Button for the user to Accept the friend request -->
                         <a href="{% url 'users:accept_friend' friend.Amigo.username %}">Accept Friend Request</a>
+                        <!-- Button for the user to Reject the friend request -->
                         <a href="{% url 'users:reject_friend' friend.Amigo.username %}">Reject Friend Request</a>
                     {% else %}
+                        <!-- Button for the user to Enter the friend's calendar -->
                         <a href="{% url 'users:update_friend' friend.Amigo.username %}">
                             <div>
                                 View Calendar
@@ -59,7 +66,7 @@ Register
         {% endfor %}
         </div>
 
-
+        <!-- Form which allows the user to insert username and send a friend request to them -->
         <div class="add-friends-box">
             <div class="bold-box">
                 Want Friends?
