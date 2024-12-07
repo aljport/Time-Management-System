@@ -58,12 +58,12 @@ html, body {
 .shade-75{
   background-color: rgba(144, 214, 255, 0.75);
 }
-
+/* Arranges reset password and create account links */
 .links-container{
 
   text-align: center;
 }
-
+/* Decor */
 .lightRectangle {
   width: 290px;
   height: 100vh;
@@ -82,6 +82,7 @@ html, body {
   right: 0;
   z-index: 0;
 }
+/* Font change */
 .login {
   font-size: 2.5em;
   font-weight: 500;
@@ -91,6 +92,7 @@ html, body {
   margin-top: 30px;
   letter-spacing: 2px;
 }
+/* Font change */
 label {
   display: block; /* Makes label occupy full width */
   margin-bottom: 5px; /* Space between label and input */
@@ -100,6 +102,7 @@ label {
   margin-left: 40px;
   letter-spacing: 1px;
 }
+/* Input line instead of unappealing input box */
 input {
   margin-top: 5px; /* Space between label and input */
   margin-bottom: 40px;
