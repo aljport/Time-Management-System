@@ -24,6 +24,7 @@ CURRENT_USER = None
 def index(request):
     return render(request, 'home.html')
 
+# Logs into the system with the designated username and password of the user
 def login_page(request):
     global CURRENT_USER
     if request.method == "POST":
@@ -47,6 +48,7 @@ def login_page(request):
         
     return render(request, 'login.html')
 
+# Takes the information that was given in the page and turns it into a new user
 def register_page(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
@@ -73,6 +75,7 @@ def register_page(request):
     
     return render(request, 'register.html')
 
+# Gets the username of the account they want to reset their password in
 def username_get_page(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -89,7 +92,7 @@ def username_get_page(request):
             return redirect('/users/password_reset')
     return render(request, 'username_get.html')
 
-
+# Asks the user to take the code they got from their email and put it in here
 def password_reset_page(request):
     global NUMBER 
     if request.method == 'POST':
@@ -101,6 +104,7 @@ def password_reset_page(request):
             messages.error(request, "Not the correct number, new email is being sent")
             return redirect('/users/password_reset')
 
+    # Sets up the code and sends the email
     NUMBER = ""
         
     for i in range(8):
@@ -124,7 +128,7 @@ def password_reset_page(request):
     return render(request, 'password_reset.html')
 
     
-
+# Asks the user to put in the new password twice and moves on if it they were the same
 def password_change_page(request):
     if request.method == 'POST':
         password = request.POST.get('password')
@@ -143,10 +147,11 @@ def password_change_page(request):
         
     return render(request, 'password_change.html')
 
+# Shows a screen that shows that the password reset was sucessful
 def password_confirm_page(request):
     return render(request, 'password_confirm.html')
 
-
+# Shows off the user's account information and allows the user to logout 
 def account_information_page(request):
     if request.method == 'POST':
         logout(request)
@@ -223,6 +228,7 @@ def account_information_page(request):
     }
     return render(request, 'account_information.html', context)
 
+# Sets up the friend list to show off each of the user's friend and allowed the user to submit a username of another user to make them into a friend
 def friend_list_page(request):
     global CURRENT_USER
     if request.method == 'POST':
@@ -244,7 +250,7 @@ def friend_list_page(request):
             return redirect('/users/friend_list')
 
         
-        #Send a email to the user being befriended before adding them to the friend list
+        # Sets up the friend objects for both the current user and the recieving user
         friend_user = User.objects.get(username = friend_username)
         new_friend = Friends.objects.create(Amigo = friend_user, requestPending = False, viewable = False)
         new_friend.save()
@@ -333,10 +339,11 @@ def friend_list_page(request):
     }
     return render(request, 'friend_list.html', context)
 
+# Accepts the friend request and the friend object to correspond to it
 def accept_friend(request, friend_username):
     
     friend = request.user.profile.friendList.get(Amigo__username=friend_username)
-    # Update friend request status
+
     if friend.requestPending:
         friend.requestPending = False
         currentUserFriend = friend.Amigo.profile.friendList.get(Amigo = request.user)
@@ -351,25 +358,23 @@ def accept_friend(request, friend_username):
     # Redirect to the same page
     return redirect('/users/friend_list')
 
+# Rejects the friend request by removing the friend object from both user
 def reject_friend(request, friend_username):
     
     friend = request.user.profile.friendList.filter(Amigo__username=friend_username).first()
-    # Handle rejection logic (could delete the friend request or mark as rejected)
     currentUserFriend = friend.Amigo.profile.friendList.get(Amigo = request.user)
     friend.delete()
     currentUserFriend.delete()
     messages.success(request, "Friend request rejected.")
 
-    # Redirect to the same page
     return redirect('/users/friend_list')
 
+# Updates who the viewer who is viewing the code is.
 def update_friend(request, friend_username):
     global CURRENT_USER
     
     friend = request.user.profile.friendList.filter(Amigo__username=friend_username).first()
-    # Update logic for friend info (example: updating profile details)
     CURRENT_USER = friend.Amigo
     friend.Amigo.profile.isViewer = True
     
-    # Redirect to another page (e.g., friend's profile page or calendar)
     return redirect('/cal/month')  # Replace with the target page URL
