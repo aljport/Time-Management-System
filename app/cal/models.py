@@ -7,9 +7,8 @@ from users.models import Profile, Friends
 import datetime
 
 
-
+<!-- contains title, desc, start/end time vars, etc for the event -->
 class Event(models.Model):
-    # contains title, desc, start/end time vars, etc for the event
     title = models.CharField(max_length=150, default="My Event")
     description = models.TextField(blank=True)
     start_time = models.DateTimeField(default=timezone.now)
@@ -21,10 +20,10 @@ class Event(models.Model):
 
 
     def __str__(self):
-        return self.title # string of event 
+        return self.title <!-- string of event  --> 
     
 class Notifications(models.Model):
-    # links both event and user who get notif / what notif is 
+    <!-- links both event and user who get notif / what notif is  --> 
     event = models.ForeignKey(User, on_delete=models.CASCADE)
     user = models.ForeignKey(Event, on_delete=models.CASCADE)
     time_sent = models.DateTimeField(auto_now_add=True) 
